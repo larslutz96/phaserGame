@@ -1,29 +1,30 @@
 import { Boot } from "./scenes/Boot";
-import { Game } from "./scenes/Game";
+import { PlayGame } from "./scenes/Game/PlayGame";
 import { GameOver } from "./scenes/GameOver";
 import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
+import { gameOptions } from "./gameOptions";
 
-//  Find out more information about the Game Config at:
-//  https://newdocs.phaser.io/docs/3.70.0/Phaser.Types.Core.GameConfig
+// object to initialize the Scale Manager
+const scale = {
+  mode: Phaser.Scale.FIT, // adjust size to automatically fit in the window
+  autoCenter: Phaser.Scale.CENTER_BOTH, // center the game horizontally and vertically
+  parent: "game-container", // DOM id where to render the game
+  width: gameOptions.gameSize.width, // game width, in pixels
+  height: gameOptions.gameSize.height, // game height, in pixels
+};
+
 const config = {
   type: Phaser.AUTO,
-  width: 800,
-  height: 600,
+  width: gameOptions.gameSize.width,
+  height: gameOptions.gameSize.height,
   parent: "game-container",
-  backgroundColor: "#028af8",
-  scale: {
-    mode: Phaser.Scale.FIT,
-    autoCenter: Phaser.Scale.CENTER_BOTH,
-  },
+  backgroundColor: gameOptions.gameBackgroundColor,
+  scale: scale,
   physics: {
-    default: "arcade",
-    arcade: {
-      gravity: { y: 300 },
-      debug: false,
-    },
+    default: "arcade"
   },
-  scene: [Boot, Preloader, MainMenu, Game, GameOver],
+  scene: [Boot, Preloader, MainMenu, PlayGame, GameOver],
 };
 
 export default new Phaser.Game(config);

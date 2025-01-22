@@ -1,4 +1,5 @@
 import { Scene } from "phaser";
+import { gameOptions } from "../gameOptions";
 
 export class GameOver extends Scene {
   constructor() {
@@ -8,11 +9,17 @@ export class GameOver extends Scene {
   create() {
     this.cameras.main.setBackgroundColor(0xff0000);
 
-    this.add.image(512, 384, "background").setAlpha(0.5);
+    this.add
+      .image(
+        gameOptions.gameSize.width / 2,
+        gameOptions.gameSize.height / 2,
+        "background",
+      )
+      .setAlpha(0.5);
 
     this.add
       .text(512, 384, "Game Over", {
-        fontFamily: "Arial Black",
+        fontFamily: gameOptions.fontFamily,
         fontSize: 64,
         color: "#ffffff",
         stroke: "#000000",
