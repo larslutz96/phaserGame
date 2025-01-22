@@ -4,6 +4,7 @@ import { GameOver } from "./scenes/GameOver";
 import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
 import { gameOptions } from "./gameOptions";
+import { PauseMenu } from "./scenes/PauseMenu";
 
 // object to initialize the Scale Manager
 const scale = {
@@ -22,9 +23,9 @@ const config = {
   backgroundColor: gameOptions.gameBackgroundColor,
   scale: scale,
   physics: {
-    default: "arcade"
+    default: "arcade",
   },
-  scene: [Boot, Preloader, MainMenu, PlayGame, GameOver],
+  scene: [Boot, Preloader, MainMenu, PlayGame, GameOver, PauseMenu],
 };
 
 export default new Phaser.Game(config);

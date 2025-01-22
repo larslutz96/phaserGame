@@ -9,9 +9,12 @@ export const gameOptions = {
   },
   gameBackgroundColor: 0x222222, // game background color
 
-  playerSpeed: 1000, // player speed, in pixels per second
-  enemySpeed: 500, // enemy speed, in pixels per second
-  bulletSpeed: 2000, // bullet speed, in pixels per second
+  playerSpeed: 500, // player speed, in pixels per second
+
+  bulletSpeed: 1000, // bullet speed, in pixels per second
   bulletRate: 100, // bullet rate, in milliseconds per bullet
-  enemyRate: 800, // enemy rate, in milliseconds per enemy
+
+  gruntMinSpeed: 50, // enemy speed, in pixels per second
+  gruntMaxSpeed: 500,
+  gruntSpawnRate: 500, // enemy rate, in milliseconds per enemy
 };

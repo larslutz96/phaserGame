@@ -1,5 +1,10 @@
+/* eslint-disable no-undef */
 import { Scene } from "phaser";
 import { gameOptions } from "../../gameOptions"; // game options
+import { createPlayer, setPlayerVelocity } from "./player";
+import { createAnims } from "./animations";
+import { createEnemy, moveEnemiesTowardsPlayer } from "./enemies";
+import { createControlls, checkControllsPressed } from "./gameControlls";
 
 // PlayGame class extends Phaser.Scene class
 export class PlayGame extends Scene {
@@ -11,60 +16,28 @@ export class PlayGame extends Scene {
 
   controlKeys; // keys used to move the player
   player; // the player
-  enemyGrou; // group with all enemies
+  enemyGrunts; // group with all enemies
+  gruntAmount = 10;
+  currentWave = 1;
+  maxWave = 5;
+  gameOver = false;
 
-  // method to be called once the instance has been created
   create() {
+    this.controlKeys = createControlls(this.input, this.controlKeys);
+
     // add player, enemies group and bullets group
-    this.player = this.physics.add.sprite(
-      gameOptions.gameSize.width / 2,
-      gameOptions.gameSize.height / 2,
-      "player",
+    this.player = createPlayer(this.player, this.physics);
+
+    if (!this.anims.anims.entries.left) createAnims(this.anims);
+
+    //Initial spawn of enemies for wave 1
+    this.enemyGrunts = createEnemy(
+      this.physics,
+      this.enemyGrunts,
+      this.gruntAmount,
     );
-    this.enemyGroup = this.physics.add.group();
+
     const bulletGroup = this.physics.add.group();
-
-    // set keyboard controls
-    const keyboard = this.input.keyboard;
-    this.controlKeys = keyboard.addKeys({
-      up: Phaser.Input.Keyboard.KeyCodes.W,
-      left: Phaser.Input.Keyboard.KeyCodes.A,
-      down: Phaser.Input.Keyboard.KeyCodes.S,
-      right: Phaser.Input.Keyboard.KeyCodes.D,
-    });
-
-    // set outer rectangle and inner rectangle; enemy spawn area is between these rectangles
-    const outerRectangle = new Phaser.Geom.Rectangle(
-      -100,
-      -100,
-      gameOptions.gameSize.width + 200,
-      gameOptions.gameSize.height + 200,
-    );
-    const innerRectangle = new Phaser.Geom.Rectangle(
-      -50,
-      -50,
-      gameOptions.gameSize.width + 100,
-      gameOptions.gameSize.height + 100,
-    );
-
-    // timer event to add enemies
-    this.time.addEvent({
-      delay: gameOptions.enemyRate,
-      loop: true,
-      callback: () => {
-        const spawnPoint = Phaser.Geom.Rectangle.RandomOutside(
-          outerRectangle,
-          innerRectangle,
-        );
-        const enemy = this.physics.add.sprite(
-          spawnPoint.x,
-          spawnPoint.y,
-          "enemy",
-        );
-        this.enemyGroup.add(enemy);
-      },
-    });
-
     // timer event to fire bullets
     this.time.addEvent({
       delay: gameOptions.bulletRate,
@@ -72,7 +45,7 @@ export class PlayGame extends Scene {
       callback: () => {
         const closestEnemy = this.physics.closest(
           this.player,
-          this.enemyGroup.getMatching("visible", true),
+          this.enemyGrunts.getMatching("visible", true),
         );
         if (closestEnemy != null) {
           const bullet = this.physics.add.sprite(
@@ -91,53 +64,64 @@ export class PlayGame extends Scene {
     });
 
     // bullet Vs enemy collision
-    this.physics.add.collider(bulletGroup, this.enemyGroup, (bullet, enemy) => {
-      bulletGroup.killAndHide(bullet);
-      bullet.body.checkCollision.none = true;
-      this.enemyGroup.killAndHide(enemy);
-      enemy.body.checkCollision.none = true;
-    });
-
+    this.physics.add.collider(
+      bulletGroup,
+      this.enemyGrunts,
+      (bullet, enemy) => {
+        bulletGroup.killAndHide(bullet);
+        bullet.body.checkCollision.none = true;
+        this.enemyGrunts.killAndHide(enemy);
+        this.gruntAmount -= 1;
+        enemy.body.checkCollision.none = true;
+      },
+    );
     // player Vs enemy collision
-    this.physics.add.collider(this.player, this.enemyGroup, () => {
+    this.physics.add.collider(this.player, this.enemyGrunts, () => {
+      this.gruntAmount = 10;
+      this.currentWave = 1;
       this.scene.restart();
     });
   }
 
   // metod to be called at each frame
   update() {
+    if (this.gruntAmount === 0) {
+      if (this.currentWave === this.maxWave) {
+        //If we're on wave 3 (max) and gruntAmount is zero, that means the player has defeated all waves
+        //this.victoryText.visible = true;
+        this.gameOver = true;
+        this.scene.start("MainMenu");
+      } else {
+        this.currentWave += 1; //Increment the wave amount to make more baddies spawn
+        this.gruntAmount = this.currentWave * 10;
+        this.enemyGrunts.createMultiple({
+          key: "bunny",
+          repeat: this.gruntAmount - 1,
+          setXY: { x: 0, y: 0, stepX: 15 },
+        });
+        this.enemyGrunts.children.iterate(function (child) {
+          child.setVelocity(
+            0,
+            Phaser.Math.FloatBetween(
+              gameOptions.gruntMinSpeed,
+              gameOptions.gruntMaxSpeed,
+            ),
+          );
+        });
+      }
+    }
+
     // set movement direction according to keys pressed
     let movementDirection = new Phaser.Math.Vector2(0, 0);
-    if (this.controlKeys.right.isDown) {
-      movementDirection.x++;
-    }
-    if (this.controlKeys.left.isDown) {
-      movementDirection.x--;
-    }
-    if (this.controlKeys.up.isDown) {
-      movementDirection.y--;
-    }
-    if (this.controlKeys.down.isDown) {
-      movementDirection.y++;
-    }
+    movementDirection = checkControllsPressed(
+      this.controlKeys,
+      this.player,
+      this.scene,
+      movementDirection,
+    );
 
-    // set player velocity according to movement direction
-    this.player.setVelocity(0, 0);
-    if (movementDirection.x == 0 || movementDirection.y == 0) {
-      this.player.setVelocity(
-        movementDirection.x * gameOptions.playerSpeed,
-        movementDirection.y * gameOptions.playerSpeed,
-      );
-    } else {
-      this.player.setVelocity(
-        (movementDirection.x * gameOptions.playerSpeed) / Math.sqrt(2),
-        (movementDirection.y * gameOptions.playerSpeed) / Math.sqrt(2),
-      );
-    }
+    setPlayerVelocity(this.player,movementDirection)
 
-    // move enemies towards player
-    this.enemyGroup.getMatching("visible", true).forEach((enemy) => {
-      this.physics.moveToObject(enemy, this.player, gameOptions.enemySpeed);
-    });
+    moveEnemiesTowardsPlayer(this.enemyGrunts, this.physics, this.player);
   }
 }
