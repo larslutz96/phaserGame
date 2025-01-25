@@ -1,37 +1,41 @@
-/* eslint-disable no-undef */
 import { Scene } from "phaser";
 import { gameOptions } from "../../gameOptions"; // game options
 import { createPlayer, setPlayerVelocity } from "./player";
 import { createAnims } from "./animations";
-import { createEnemy, moveEnemiesTowardsPlayer } from "./enemies";
+import {
+  addEnemy,
+  createEnemy,
+  moveEnemiesTowardsPlayer,
+  isEnemyInsideGame,
+} from "./enemies";
 import { createControlls, checkControllsPressed } from "./gameControlls";
 
 // PlayGame class extends Phaser.Scene class
 export class PlayGame extends Scene {
+  controlKeys; // keys used to move the player
+  player; // the player
+  enemyGrunts; // group with all enemies
+  gruntAmount;
+
   constructor() {
     super({
       key: "PlayGame",
     });
   }
 
-  controlKeys; // keys used to move the player
-  player; // the player
-  enemyGrunts; // group with all enemies
-  gruntAmount = 10;
-  currentWave = 1;
-  maxWave = 5;
-  gameOver = false;
+  init() {
+    this.gruntAmount = 10;
+    this.currentWave = 1;
+    this.controlKeys = createControlls(this.input, this.controlKeys);
+    if (!this.anims.anims.entries.left) createAnims(this.anims);
+  }
 
   create() {
-    this.controlKeys = createControlls(this.input, this.controlKeys);
-
     // add player, enemies group and bullets group
     this.player = createPlayer(this.player, this.physics);
 
-    if (!this.anims.anims.entries.left) createAnims(this.anims);
-
     //Initial spawn of enemies for wave 1
-    this.enemyGrunts = createEnemy(
+    this.enemyGrunts = addEnemy(
       this.physics,
       this.enemyGrunts,
       this.gruntAmount,
@@ -47,7 +51,7 @@ export class PlayGame extends Scene {
           this.player,
           this.enemyGrunts.getMatching("visible", true),
         );
-        if (closestEnemy != null) {
+        if (closestEnemy != null && isEnemyInsideGame(closestEnemy)) {
           const bullet = this.physics.add.sprite(
             this.player.x,
             this.player.y,
@@ -81,34 +85,22 @@ export class PlayGame extends Scene {
       this.currentWave = 1;
       this.scene.restart();
     });
+
+    // Game Ends After Duration
+    this.time.addEvent({
+      delay: gameOptions.gameDuration,
+      callback: () => {
+        this.scene.start("MainMenu");
+      },
+    });
   }
 
   // metod to be called at each frame
   update() {
     if (this.gruntAmount === 0) {
-      if (this.currentWave === this.maxWave) {
-        //If we're on wave 3 (max) and gruntAmount is zero, that means the player has defeated all waves
-        //this.victoryText.visible = true;
-        this.gameOver = true;
-        this.scene.start("MainMenu");
-      } else {
-        this.currentWave += 1; //Increment the wave amount to make more baddies spawn
-        this.gruntAmount = this.currentWave * 10;
-        this.enemyGrunts.createMultiple({
-          key: "bunny",
-          repeat: this.gruntAmount - 1,
-          setXY: { x: 0, y: 0, stepX: 15 },
-        });
-        this.enemyGrunts.children.iterate(function (child) {
-          child.setVelocity(
-            0,
-            Phaser.Math.FloatBetween(
-              gameOptions.gruntMinSpeed,
-              gameOptions.gruntMaxSpeed,
-            ),
-          );
-        });
-      }
+      this.currentWave += 1; //Increment the wave amount to make more baddies spawn
+      this.gruntAmount = this.currentWave;
+      createEnemy(this.enemyGrunts, "bunny", this.gruntAmount);
     }
 
     // set movement direction according to keys pressed
@@ -120,7 +112,7 @@ export class PlayGame extends Scene {
       movementDirection,
     );
 
-    setPlayerVelocity(this.player,movementDirection)
+    setPlayerVelocity(this.player, movementDirection);
 
     moveEnemiesTowardsPlayer(this.enemyGrunts, this.physics, this.player);
   }

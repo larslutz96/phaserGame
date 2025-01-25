@@ -11,7 +11,7 @@ function createPlayer(player, physics) {
   return player;
 }
 
-function setPlayerVelocity (player, movementDirection) {
+function setPlayerVelocity(player, movementDirection) {
   // set player velocity according to movement direction
   player.setVelocity(0, 0);
   if (movementDirection.x == 0 || movementDirection.y == 0) {

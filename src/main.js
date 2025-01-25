@@ -16,9 +16,7 @@ const scale = {
 };
 
 const config = {
-  type: Phaser.AUTO,
-  width: gameOptions.gameSize.width,
-  height: gameOptions.gameSize.height,
+  type: Phaser.WEBGL,
   parent: "game-container",
   backgroundColor: gameOptions.gameBackgroundColor,
   scale: scale,

@@ -7,6 +7,7 @@ export const gameOptions = {
     width: 800, // width of the game, in pixels
     height: 800, // height of the game, in pixels
   },
+  gameDuration: 600000,
   gameBackgroundColor: 0x222222, // game background color
 
   playerSpeed: 500, // player speed, in pixels per second
@@ -15,6 +16,6 @@ export const gameOptions = {
   bulletRate: 100, // bullet rate, in milliseconds per bullet
 
   gruntMinSpeed: 50, // enemy speed, in pixels per second
-  gruntMaxSpeed: 500,
+  gruntMaxSpeed: 100,
   gruntSpawnRate: 500, // enemy rate, in milliseconds per enemy
 };
