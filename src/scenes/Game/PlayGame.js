@@ -3,7 +3,6 @@ import { gameOptions } from "../../gameOptions"; // game options
 import { createPlayer, setPlayerVelocity } from "./player";
 import { createAnims } from "./animations";
 import {
-  addEnemy,
   createEnemy,
   moveEnemiesTowardsPlayer,
   isEnemyInsideGame,
@@ -14,7 +13,7 @@ import { createControlls, checkControllsPressed } from "./gameControlls";
 export class PlayGame extends Scene {
   controlKeys; // keys used to move the player
   player; // the player
-  enemyGrunts; // group with all enemies
+  enemyGroup; // group with all enemies
   gruntAmount;
 
   constructor() {
@@ -24,7 +23,6 @@ export class PlayGame extends Scene {
   }
 
   init() {
-    this.gruntAmount = 10;
     this.currentWave = 1;
     this.controlKeys = createControlls(this.input, this.controlKeys);
     if (!this.anims.anims.entries.left) createAnims(this.anims);
@@ -34,12 +32,13 @@ export class PlayGame extends Scene {
     // add player, enemies group and bullets group
     this.player = createPlayer(this.player, this.physics);
 
-    //Initial spawn of enemies for wave 1
-    this.enemyGrunts = addEnemy(
-      this.physics,
-      this.enemyGrunts,
-      this.gruntAmount,
-    );
+    this.enemyGroup = this.physics.add.group();
+    // timer event to add enemies
+    this.time.addEvent({
+      delay: gameOptions.enemyRate,
+      loop: true,
+      callback: () => createEnemy(this.physics, this.enemyGroup, "bunny"),
+    });
 
     const bulletGroup = this.physics.add.group();
     // timer event to fire bullets
@@ -49,7 +48,7 @@ export class PlayGame extends Scene {
       callback: () => {
         const closestEnemy = this.physics.closest(
           this.player,
-          this.enemyGrunts.getMatching("visible", true),
+          this.enemyGroup.getMatching("visible", true),
         );
         if (closestEnemy != null && isEnemyInsideGame(closestEnemy)) {
           const bullet = this.physics.add.sprite(
@@ -68,19 +67,15 @@ export class PlayGame extends Scene {
     });
 
     // bullet Vs enemy collision
-    this.physics.add.collider(
-      bulletGroup,
-      this.enemyGrunts,
-      (bullet, enemy) => {
-        bulletGroup.killAndHide(bullet);
-        bullet.body.checkCollision.none = true;
-        this.enemyGrunts.killAndHide(enemy);
-        this.gruntAmount -= 1;
-        enemy.body.checkCollision.none = true;
-      },
-    );
+    this.physics.add.collider(bulletGroup, this.enemyGroup, (bullet, enemy) => {
+      bulletGroup.killAndHide(bullet);
+      bullet.body.checkCollision.none = true;
+      this.enemyGroup.killAndHide(enemy);
+      this.gruntAmount -= 1;
+      enemy.body.checkCollision.none = true;
+    });
     // player Vs enemy collision
-    this.physics.add.collider(this.player, this.enemyGrunts, () => {
+    this.physics.add.collider(this.player, this.enemyGroup, () => {
       this.gruntAmount = 10;
       this.currentWave = 1;
       this.scene.restart();
@@ -97,12 +92,6 @@ export class PlayGame extends Scene {
 
   // metod to be called at each frame
   update() {
-    if (this.gruntAmount === 0) {
-      this.currentWave += 1; //Increment the wave amount to make more baddies spawn
-      this.gruntAmount = this.currentWave;
-      createEnemy(this.enemyGrunts, "bunny", this.gruntAmount);
-    }
-
     // set movement direction according to keys pressed
     let movementDirection = new Phaser.Math.Vector2(0, 0);
     movementDirection = checkControllsPressed(
@@ -114,6 +103,6 @@ export class PlayGame extends Scene {
 
     setPlayerVelocity(this.player, movementDirection);
 
-    moveEnemiesTowardsPlayer(this.enemyGrunts, this.physics, this.player);
+    moveEnemiesTowardsPlayer(this.enemyGroup, this.physics, this.player);
   }
 }
