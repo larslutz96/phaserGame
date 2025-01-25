@@ -2,11 +2,9 @@ import { Scene } from "phaser";
 import { gameOptions } from "../../gameOptions"; // game options
 import { createPlayer, setPlayerVelocity } from "./player";
 import { createAnims } from "./animations";
-import {
-  createEnemy,
-  moveEnemiesTowardsPlayer,
-  isEnemyInsideGame,
-} from "./enemies";
+import { addCollider, addTimers } from "./utils";
+import * as actions from "./actions";
+import { createEnemy, moveEnemiesTowardsPlayer } from "./enemies";
 import { createControlls, checkControllsPressed } from "./gameControlls";
 
 // PlayGame class extends Phaser.Scene class
@@ -14,7 +12,6 @@ export class PlayGame extends Scene {
   controlKeys; // keys used to move the player
   player; // the player
   enemyGroup; // group with all enemies
-  gruntAmount;
 
   constructor() {
     super({
@@ -29,80 +26,97 @@ export class PlayGame extends Scene {
   }
 
   create() {
+    const { physics } = this;
     // add player, enemies group and bullets group
-    this.player = createPlayer(this.player, this.physics);
-
-    this.enemyGroup = this.physics.add.group();
-    // timer event to add enemies
-    this.time.addEvent({
-      delay: gameOptions.enemyRate,
-      loop: true,
-      callback: () => createEnemy(this.physics, this.enemyGroup, "bunny"),
-    });
-
+    const player = (this.player = createPlayer(this.player, this.physics));
+    const enemyGroup = (this.enemyGroup = this.physics.add.group());
     const bulletGroup = this.physics.add.group();
-    // timer event to fire bullets
-    this.time.addEvent({
-      delay: gameOptions.bulletRate,
-      loop: true,
-      callback: () => {
-        const closestEnemy = this.physics.closest(
-          this.player,
-          this.enemyGroup.getMatching("visible", true),
-        );
-        if (closestEnemy != null && isEnemyInsideGame(closestEnemy)) {
-          const bullet = this.physics.add.sprite(
-            this.player.x,
-            this.player.y,
-            "bullet",
-          );
-          bulletGroup.add(bullet);
-          this.physics.moveToObject(
-            bullet,
-            closestEnemy,
-            gameOptions.bulletSpeed,
-          );
-        }
+    const axesGroup = this.physics.add.group();
+    const weaponGroups = [
+      {
+        group: bulletGroup,
+        spriteName: "bullet",
+        speed: gameOptions.bulletSpeed,
       },
-    });
-
-    // bullet Vs enemy collision
-    this.physics.add.collider(bulletGroup, this.enemyGroup, (bullet, enemy) => {
-      bulletGroup.killAndHide(bullet);
-      bullet.body.checkCollision.none = true;
-      this.enemyGroup.killAndHide(enemy);
-      this.gruntAmount -= 1;
-      enemy.body.checkCollision.none = true;
-    });
-    // player Vs enemy collision
-    this.physics.add.collider(this.player, this.enemyGroup, () => {
-      this.gruntAmount = 10;
-      this.currentWave = 1;
-      this.scene.restart();
-    });
-
-    // Game Ends After Duration
-    this.time.addEvent({
-      delay: gameOptions.gameDuration,
-      callback: () => {
-        this.scene.start("MainMenu");
+      {
+        group: axesGroup,
+        spriteName: "axe",
+        speed: gameOptions.bulletSpeed,
+        displayWidth: 50,
       },
-    });
+    ];
+
+    addTimers(
+      [
+        {
+          delay: gameOptions.bulletRate,
+          loop: true,
+          callback: () =>
+            actions.timerWeaponsAction(
+              physics,
+              player,
+              enemyGroup,
+              weaponGroups,
+            ),
+        },
+        {
+          delay: gameOptions.enemyRate,
+          loop: true,
+          callback: () => createEnemy(this.physics, enemyGroup, "bunny"),
+        },
+      ],
+      this.time,
+    );
+
+    addCollider(
+      [
+        {
+          group: player,
+          action: () => actions.colPlayerEnemyAction(this),
+        },
+        {
+          group: bulletGroup,
+          action: (bullet, enemy) =>
+            actions.colBulletEnemyAction(
+              bullet,
+              enemy,
+              bulletGroup,
+              enemyGroup,
+            ),
+        },
+        {
+          group: axesGroup,
+          action: (axe, enemy) =>
+            actions.colAxeEnemyAction(
+              axe,
+              enemy,
+              player,
+              gameOptions,
+              enemyGroup,
+              physics,
+            ),
+        },
+      ],
+      enemyGroup,
+      physics,
+    );
   }
 
   // metod to be called at each frame
   update() {
+    const { player, enemyGroup, controlKeys, scene, physics } = this;
+
     // set movement direction according to keys pressed
     let movementDirection = new Phaser.Math.Vector2(0, 0);
     movementDirection = checkControllsPressed(
-      this.controlKeys,
-      this.player,
-      this.scene,
+      controlKeys,
+      player,
+      scene,
       movementDirection,
     );
 
-    setPlayerVelocity(this.player, movementDirection);
+    setPlayerVelocity(player, movementDirection);
 
-    moveEnemiesTowardsPlayer(this.enemyGroup, this.physics, this.player);
+    moveEnemiesTowardsPlayer(enemyGroup, physics, player);
   }
 }

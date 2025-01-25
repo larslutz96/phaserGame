@@ -21,14 +21,7 @@ const innerRectangle = new Phaser.Geom.Rectangle(
 function moveEnemiesTowardsPlayer(enemy, physics, player) {
   // move enemies towards player
   enemy.getMatching("visible", true).forEach((enemy) => {
-    physics.moveToObject(
-      enemy,
-      player,
-      Phaser.Math.FloatBetween(
-        gameOptions.gruntMinSpeed,
-        gameOptions.gruntMaxSpeed,
-      ),
-    );
+    physics.moveToObject(enemy, player, gameOptions.enemySpeed);
   });
 }
 

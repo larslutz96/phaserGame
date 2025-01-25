@@ -33,6 +33,7 @@ export class Preloader extends Scene {
       frameWidth: 32,
       frameHeight: 48,
     });
+    this.load.image("axe", "sprites/axe.png"); // the spike
   }
 
   create() {

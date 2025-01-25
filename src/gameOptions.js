@@ -13,9 +13,8 @@ export const gameOptions = {
   playerSpeed: 500, // player speed, in pixels per second
 
   bulletSpeed: 1000, // bullet speed, in pixels per second
-  bulletRate: 10, // bullet rate, in milliseconds per bullet
+  bulletRate: 300, // bullet rate, in milliseconds per bullet
 
-  gruntMinSpeed: 150, // enemy speed, in pixels per second
-  gruntMaxSpeed: 200,
-  enemyRate: 100, // enemy rate, in milliseconds per enemy
+  enemySpeed: 100,
+  enemyRate: 5, // enemy rate, in milliseconds per enemy
 };
