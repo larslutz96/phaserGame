@@ -1,1 +1,0 @@
-//export { collectStar, hitBomb };

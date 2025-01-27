@@ -1,4 +1,4 @@
-import { gameOptions } from "../../gameOptions"; // game options
+import { gameOptions } from "./gameOptions"; // game options
 const gameRectangle = new Phaser.Geom.Rectangle(
   0,
   0,
@@ -21,7 +21,7 @@ const innerRectangle = new Phaser.Geom.Rectangle(
 function moveEnemiesTowardsPlayer(enemy, physics, player) {
   // move enemies towards player
   enemy.getMatching("visible", true).forEach((enemy) => {
-    physics.moveToObject(enemy, player, gameOptions.enemySpeed);
+    physics.moveToObject(enemy, player, gameOptions.enemies.bunnySpeed);
   });
 }
 

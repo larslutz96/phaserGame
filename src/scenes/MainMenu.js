@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { gameOptions } from "../gameOptions";
+import { gameOptions } from "./Game/gameOptions";
 
 export class MainMenu extends Scene {
   constructor() {

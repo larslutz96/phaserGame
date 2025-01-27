@@ -1,48 +1,41 @@
 import { isEnemyInsideGame } from "./enemies";
-import { gameOptions } from "../../gameOptions"; // game options
+import { gameOptions } from "./gameOptions"; // game options
 
 // collider actions
-const colBulletEnemyAction = (bullet, enemy, bulletGroup, enemyGroup) => {
+const colBulletEnemyAction = (bullet, enemy, enemyGroup, bulletGroup) => {
   bulletGroup.killAndHide(bullet);
   bullet.body.checkCollision.none = true;
   enemyGroup.killAndHide(enemy);
   enemy.body.checkCollision.none = true;
 };
 
-const colAxeEnemyAction = (
-  axe,
-  enemy,
-  player,
-  gameOptions,
-  enemyGroup,
-  physics,
-) => {
-  physics.moveToObject(axe, player, gameOptions.bulletSpeed);
+const colAxeEnemyAction = (axe, enemy, enemyGroup, player, physics) => {
+  physics.moveToObject(axe, player, gameOptions.weapons.axeSpeed);
   enemyGroup.killAndHide(enemy);
   enemy.body.checkCollision.none = true;
 };
 
-const colPlayerEnemyAction = (scene) => {
-  scene.currentWave = 1;
-  scene.scene.restart();
+const colPlayerEnemyAction = (currentWave, scene) => {
+  currentWave = 1;
+  scene.restart();
 };
 
 // timer actions
-const timerWeaponsAction = (physics, player, enemyGroup, weaponGroups) => {
+const timerWeaponsAction = (physics, player, enemyGroup, weapons) => {
   const closestEnemy = physics.closest(
     player,
     enemyGroup.getMatching("visible", true),
   );
   if (closestEnemy != null && isEnemyInsideGame(closestEnemy)) {
-    weaponGroups.forEach((weapon) => {
-      const sprite = physics.add.sprite(player.x, player.y, weapon.spriteName);
-      weapon.group.add(sprite);
-      if (weapon.displayWidth) {
-        sprite.displayWidth = weapon.displayWidth;
+     Object.keys(weapons).forEach((weapon) => {
+      const sprite = physics.add.sprite(player.x, player.y, weapons[weapon].spriteName);
+      weapons[weapon].group.add(sprite);
+      if (weapons[weapon].displayWidth) {
+        sprite.displayWidth = weapons[weapon].displayWidth;
         sprite.scaleY = sprite.scaleX;
       }
 
-      physics.moveToObject(sprite, closestEnemy, weapon.speed);
+      physics.moveToObject(sprite, closestEnemy, weapons[weapon].speed);
     });
   }
 };

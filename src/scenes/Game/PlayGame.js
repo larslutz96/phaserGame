@@ -1,10 +1,9 @@
 import { Scene } from "phaser";
-import { gameOptions } from "../../gameOptions"; // game options
+import { gameOptions } from "./gameOptions"; // game options
 import { createPlayer, setPlayerVelocity } from "./player";
 import { createAnims } from "./animations";
-import { addCollider, addTimers } from "./utils";
-import * as actions from "./actions";
-import { createEnemy, moveEnemiesTowardsPlayer } from "./enemies";
+import { createColliders, createTimers } from "./utils";
+import { moveEnemiesTowardsPlayer } from "./enemies";
 import { createControlls, checkControllsPressed } from "./gameControlls";
 
 // PlayGame class extends Phaser.Scene class
@@ -26,79 +25,42 @@ export class PlayGame extends Scene {
   }
 
   create() {
-    const { physics } = this;
+    const { physics, time } = this;
     // add player, enemies group and bullets group
     const player = (this.player = createPlayer(this.player, this.physics));
     const enemyGroup = (this.enemyGroup = this.physics.add.group());
     const bulletGroup = this.physics.add.group();
-    const axesGroup = this.physics.add.group();
-    const weaponGroups = [
-      {
+    const axeGroup = this.physics.add.group();
+    const weapons = {
+      bullet: {
         group: bulletGroup,
         spriteName: "bullet",
-        speed: gameOptions.bulletSpeed,
+        speed: gameOptions.weapons.bulletSpeed,
       },
-      {
-        group: axesGroup,
+      axe: {
+        group: axeGroup,
         spriteName: "axe",
-        speed: gameOptions.bulletSpeed,
+        speed: gameOptions.weapons.axeSpeed,
         displayWidth: 50,
       },
-    ];
+    };
 
-    addTimers(
-      [
-        {
-          delay: gameOptions.bulletRate,
-          loop: true,
-          callback: () =>
-            actions.timerWeaponsAction(
-              physics,
-              player,
-              enemyGroup,
-              weaponGroups,
-            ),
-        },
-        {
-          delay: gameOptions.enemyRate,
-          loop: true,
-          callback: () => createEnemy(this.physics, enemyGroup, "bunny"),
-        },
-      ],
-      this.time,
+    createTimers(
+      { physics, player, enemyGroup, weapons, time }
     );
 
-    addCollider(
-      [
-        {
-          group: player,
-          action: () => actions.colPlayerEnemyAction(this),
-        },
-        {
-          group: bulletGroup,
-          action: (bullet, enemy) =>
-            actions.colBulletEnemyAction(
-              bullet,
-              enemy,
-              bulletGroup,
-              enemyGroup,
-            ),
-        },
-        {
-          group: axesGroup,
-          action: (axe, enemy) =>
-            actions.colAxeEnemyAction(
-              axe,
-              enemy,
-              player,
-              gameOptions,
-              enemyGroup,
-              physics,
-            ),
-        },
-      ],
-      enemyGroup,
-      physics,
+    createColliders(
+      {
+        player,
+        enemyGroup,
+        physics,
+        groups: {
+          enemyGroup,
+          weapons
+        },        
+        currentWave: this.currentWave,
+        scene: this.scene
+      }
     );
   }
 

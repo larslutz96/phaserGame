@@ -1,4 +1,4 @@
-import { gameOptions } from "../../gameOptions"; // game options
+import { gameOptions } from "./gameOptions"; // game options
 
 function createPlayer(player, physics) {
   player = physics.add.sprite(
