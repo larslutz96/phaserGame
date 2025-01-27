@@ -1,10 +1,11 @@
 import { Scene } from "phaser";
-import { gameOptions } from "./gameOptions"; // game options
-import { createPlayer, setPlayerVelocity } from "./player";
-import { createAnims } from "./animations";
-import { createColliders, createTimers } from "./utils";
-import { moveEnemiesTowardsPlayer } from "./enemies";
-import { createControlls, checkControllsPressed } from "./gameControlls";
+import { weaponsConfig } from "../Game/config/weapons"
+import { createPlayer, setPlayerVelocity } from "../Game/player";
+import { createAnims } from "../Game/animations";
+import { createColliders, createTimers } from "../Game/utils";
+import { moveEnemiesTowardsPlayer } from "../Game/enemies";
+import { createControlls, checkControllsPressed } from "../Game/gameControlls";
+import { Weapon } from "../Game/classes/Weapon"
 
 // PlayGame class extends Phaser.Scene class
 export class PlayGame extends Scene {
@@ -31,16 +32,20 @@ export class PlayGame extends Scene {
     const enemyGroup = (this.enemyGroup = physics.add.group());
     const bulletGroup = physics.add.group();
     const axeGroup = physics.add.group();
+
+    const newsdf = new Weapon(scene.scene, 450, 450, 'bunny', 10);
+    newsdf.fire(450, 450, {x:10,y:10})
+
     const weapons = {
       bullet: {
         group: bulletGroup,
         spriteName: "bullet",
-        speed: gameOptions.weapons.bulletSpeed,
+        speed: weaponsConfig.bullet.speed,
       },
       axe: {
         group: axeGroup,
         spriteName: "axe",
-        speed: gameOptions.weapons.axeSpeed,
+        speed: weaponsConfig.axe.speed,
         displayWidth: 50,
       },
     };

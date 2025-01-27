@@ -1,9 +1,9 @@
 import { Boot } from "./scenes/Boot";
-import { PlayGame } from "./scenes/Game/PlayGame";
+import { PlayGame } from "./scenes/PlayGame";
 import { GameOver } from "./scenes/GameOver";
 import { MainMenu } from "./scenes/MainMenu";
 import { Preloader } from "./scenes/Preloader";
-import { gameOptions } from "./scenes/Game/gameOptions";
+import { gameOptions } from "./Game/config/gameOptions";
 import { PauseMenu } from "./scenes/PauseMenu";
 
 // object to initialize the Scale Manager

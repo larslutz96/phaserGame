@@ -12,13 +12,6 @@ export const gameOptions = {
 
   playerSpeed: 500, // player speed, in pixels per second
 
-  weapons: {
-    bulletSpeed: 1000, // bullet speed, in pixels per second
-    bulletRate: 300, // bullet rate, in milliseconds per bullet
-    axeSpeed: 500, // bullet speed, in pixels per second
-    axeRate: 1000, // bullet rate, in milliseconds per bullet
-  },
-
   enemies: {
     bunnySpeed: 100,
     bunnyRate: 100,

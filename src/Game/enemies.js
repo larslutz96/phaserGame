@@ -1,4 +1,4 @@
-import { gameOptions } from "./gameOptions"; // game options
+import { gameOptions } from "./config/gameOptions"; // game options
 const gameRectangle = new Phaser.Geom.Rectangle(
   0,
   0,

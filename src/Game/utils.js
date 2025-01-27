@@ -1,4 +1,4 @@
-import { timerConfigs, colliderConfigs } from "./configs";
+import { timerConfigs, colliderConfigs } from "./config/configs";
 
 const createColliders = (args) => {
   const { physics } = args; // Extract `physics` for convenience

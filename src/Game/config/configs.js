@@ -1,16 +1,17 @@
-import { createEnemy } from "./enemies";
-import * as actions from "./actions";
+import { createEnemy } from "../enemies";
+import * as actions from "../actions";
 import { gameOptions } from "./gameOptions";
+import { weaponsConfig } from "./weapons";
 
 export const timerConfigs = {
   axeTimer: {
-    delay: gameOptions.weapons.axeRate,
+    delay: weaponsConfig.axe.cooldown,
     loop: true,
     callback: ({ physics, player, enemyGroup, weapons }) =>
       actions.timerWeaponsAction(physics, player, enemyGroup, weapons),
   },
   bulletTimer: {
-    delay: gameOptions.weapons.bulletRate,
+    delay: weaponsConfig.bullet.cooldown,
     loop: true,
     callback: ({ physics, player, enemyGroup, weapons }) =>
       actions.timerWeaponsAction(physics, player, enemyGroup, weapons),

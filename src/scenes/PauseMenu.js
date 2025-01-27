@@ -1,5 +1,5 @@
 import { Scene } from "phaser";
-import { gameOptions } from "./Game/gameOptions";
+import { gameOptions } from "../Game/config/gameOptions";
 
 export class PauseMenu extends Scene {
   constructor() {

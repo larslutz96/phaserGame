@@ -1,5 +1,5 @@
 import { isEnemyInsideGame } from "./enemies";
-import { gameOptions } from "./gameOptions"; // game options
+import { weaponsConfig } from "./config/weapons"
 
 // collider actions
 const colBulletEnemyAction = (bullet, enemy, enemyGroup, bulletGroup) => {
@@ -10,7 +10,7 @@ const colBulletEnemyAction = (bullet, enemy, enemyGroup, bulletGroup) => {
 };
 
 const colAxeEnemyAction = (axe, enemy, enemyGroup, player, physics) => {
-  physics.moveToObject(axe, player, gameOptions.weapons.axeSpeed);
+  physics.moveToObject(axe, player, weaponsConfig.axe.speed);
   enemyGroup.killAndHide(enemy);
   enemy.body.checkCollision.none = true;
 };
