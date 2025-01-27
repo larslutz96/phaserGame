@@ -1,6 +1,6 @@
 import { createEnemy } from "./enemies";
 import * as actions from "./actions";
-import { gameOptions } from "./gameOptions"
+import { gameOptions } from "./gameOptions";
 
 export const timerConfigs = {
   axeTimer: {
@@ -49,7 +49,7 @@ export const colliderConfigs = {
         enemy,
         args.groups.enemyGroup,
         args.player,
-        args.physics
+        args.physics,
       ),
   }),
 };

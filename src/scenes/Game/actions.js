@@ -27,8 +27,12 @@ const timerWeaponsAction = (physics, player, enemyGroup, weapons) => {
     enemyGroup.getMatching("visible", true),
   );
   if (closestEnemy != null && isEnemyInsideGame(closestEnemy)) {
-     Object.keys(weapons).forEach((weapon) => {
-      const sprite = physics.add.sprite(player.x, player.y, weapons[weapon].spriteName);
+    Object.keys(weapons).forEach((weapon) => {
+      const sprite = physics.add.sprite(
+        player.x,
+        player.y,
+        weapons[weapon].spriteName,
+      );
       weapons[weapon].group.add(sprite);
       if (weapons[weapon].displayWidth) {
         sprite.displayWidth = weapons[weapon].displayWidth;

@@ -25,12 +25,12 @@ export class PlayGame extends Scene {
   }
 
   create() {
-    const { physics, time } = this;
+    const { physics, time, currentWave, scene } = this;
     // add player, enemies group and bullets group
-    const player = (this.player = createPlayer(this.player, this.physics));
-    const enemyGroup = (this.enemyGroup = this.physics.add.group());
-    const bulletGroup = this.physics.add.group();
-    const axeGroup = this.physics.add.group();
+    const player = (this.player = createPlayer(physics));
+    const enemyGroup = (this.enemyGroup = physics.add.group());
+    const bulletGroup = physics.add.group();
+    const axeGroup = physics.add.group();
     const weapons = {
       bullet: {
         group: bulletGroup,
@@ -45,23 +45,18 @@ export class PlayGame extends Scene {
       },
     };
 
-    createTimers(
-      { physics, player, enemyGroup, weapons, time }
-    );
+    createTimers({ physics, player, enemyGroup, weapons, time });
 
-    createColliders(
-      {
-        player,
+    createColliders({
+      groups: {
         enemyGroup,
-        physics,
-        groups: {
-          enemyGroup,
-          weapons
-        },        
-        currentWave: this.currentWave,
-        scene: this.scene
-      }
-    );
+        weapons,
+      },
+      player,
+      physics,
+      currentWave,
+      scene,
+    });
   }
 
   // metod to be called at each frame

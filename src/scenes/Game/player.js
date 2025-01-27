@@ -1,7 +1,7 @@
 import { gameOptions } from "./gameOptions"; // game options
 
-function createPlayer(player, physics) {
-  player = physics.add.sprite(
+function createPlayer(physics) {
+  const player = physics.add.sprite(
     gameOptions.gameSize.width / 2,
     gameOptions.gameSize.height / 2,
     "dude",
