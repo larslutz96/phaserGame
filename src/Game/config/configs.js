@@ -1,40 +1,17 @@
-import { createEnemy } from "../enemies";
-import * as actions from "../actions";
-import { gameOptions } from "./gameOptions";
 import { weaponsConfig } from "./weapons";
-
-export const timerConfigs = {
-  axeTimer: {
-    delay: weaponsConfig.axe.cooldown,
-    loop: true,
-    callback: ({ physics, player, enemyGroup, weapons }) =>
-      actions.timerWeaponsAction(physics, player, enemyGroup, weapons),
-  },
-  bulletTimer: {
-    delay: weaponsConfig.bullet.cooldown,
-    loop: true,
-    callback: ({ physics, player, enemyGroup, weapons }) =>
-      actions.timerWeaponsAction(physics, player, enemyGroup, weapons),
-  },
-  bunnyTimer: {
-    delay: gameOptions.enemies.bunnyRate,
-    loop: true,
-    callback: ({ physics, enemyGroup }) =>
-      createEnemy(physics, enemyGroup, "bunny"),
-  },
-};
+import { colPlayerEnemyAction } from "../player";
 
 export const colliderConfigs = {
   playerEnemyCollider: (args) => ({
     originGroup: args.player,
     targetGroup: args.groups.enemyGroup,
-    action: () => actions.colPlayerEnemyAction(args.currentWave, args.scene),
+    action: () => colPlayerEnemyAction(args.currentWave, args.scene),
   }),
   bulletEnemyCollider: (args) => ({
     originGroup: args.groups.weapons.bullet.group,
     targetGroup: args.groups.enemyGroup,
     action: (bullet, enemy) =>
-      actions.colBulletEnemyAction(
+      weaponsConfig.bullet.colliderEnemyAction(
         bullet,
         enemy,
         args.groups.enemyGroup,
@@ -45,7 +22,7 @@ export const colliderConfigs = {
     originGroup: args.groups.weapons.axe.group,
     targetGroup: args.groups.enemyGroup,
     action: (axe, enemy) =>
-      actions.colAxeEnemyAction(
+      weaponsConfig.axe.colliderEnemyAction(
         axe,
         enemy,
         args.groups.enemyGroup,

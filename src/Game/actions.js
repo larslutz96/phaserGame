@@ -1,24 +1,4 @@
 import { isEnemyInsideGame } from "./enemies";
-import { weaponsConfig } from "./config/weapons"
-
-// collider actions
-const colBulletEnemyAction = (bullet, enemy, enemyGroup, bulletGroup) => {
-  bulletGroup.killAndHide(bullet);
-  bullet.body.checkCollision.none = true;
-  enemyGroup.killAndHide(enemy);
-  enemy.body.checkCollision.none = true;
-};
-
-const colAxeEnemyAction = (axe, enemy, enemyGroup, player, physics) => {
-  physics.moveToObject(axe, player, weaponsConfig.axe.speed);
-  enemyGroup.killAndHide(enemy);
-  enemy.body.checkCollision.none = true;
-};
-
-const colPlayerEnemyAction = (currentWave, scene) => {
-  currentWave = 1;
-  scene.restart();
-};
 
 // timer actions
 const timerWeaponsAction = (physics, player, enemyGroup, weapons) => {
@@ -47,10 +27,4 @@ const timerWeaponsAction = (physics, player, enemyGroup, weapons) => {
 const timerGameDuration = (scene) => {
   scene.start("MainMenu");
 };
-export {
-  colBulletEnemyAction,
-  colAxeEnemyAction,
-  colPlayerEnemyAction,
-  timerWeaponsAction,
-  timerGameDuration,
-};
+export { timerWeaponsAction, timerGameDuration };

@@ -1,5 +1,10 @@
 import { gameOptions } from "./config/gameOptions"; // game options
 
+const colPlayerEnemyAction = (currentWave, scene) => {
+  currentWave = 1;
+  scene.restart();
+};
+
 function createPlayer(physics) {
   const player = physics.add.sprite(
     gameOptions.gameSize.width / 2,
@@ -27,4 +32,4 @@ function setPlayerVelocity(player, movementDirection) {
   }
 }
 
-export { createPlayer, setPlayerVelocity };
+export { createPlayer, setPlayerVelocity, colPlayerEnemyAction };

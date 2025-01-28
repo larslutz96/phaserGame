@@ -1,4 +1,6 @@
-import { timerConfigs, colliderConfigs } from "./config/configs";
+import { colliderConfigs } from "./config/configs";
+import { weaponsConfig } from "./config/weapons";
+import { enemiesConfig } from "./config/enemies";
 
 const createColliders = (args) => {
   const { physics } = args; // Extract `physics` for convenience
@@ -10,17 +12,18 @@ const createColliders = (args) => {
 
 const createTimers = (scene) => {
   const { physics, player, enemyGroup, weapons, time } = scene;
+  const timerConfigs = { ...weaponsConfig, ...enemiesConfig };
 
   const timers = Object.keys(timerConfigs).map((key) => {
     const config = timerConfigs[key];
     return {
-      delay: config.delay,
-      loop: config.loop,
+      delay: config.cooldown,
+      loop: true,
       callback: () =>
-        config.callback({
+        config.timerAction({
           physics,
-          player,
           enemyGroup,
+          player,
           weapons,
         }),
     };
