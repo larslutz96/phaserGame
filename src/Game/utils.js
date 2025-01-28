@@ -1,17 +1,36 @@
-import { colliderConfigs } from "./config/configs";
 import { weaponsConfig } from "./config/weapons";
 import { enemiesConfig } from "./config/enemies";
+import { playerConfig } from "./player";
 
 const createColliders = (args) => {
-  const { physics } = args; // Extract `physics` for convenience
-  Object.keys(colliderConfigs).forEach((key) => {
-    const config = colliderConfigs[key](args);
-    physics.add.collider(config.originGroup, config.targetGroup, config.action);
+  const { physics, player, scene } = args; // Extract `physics` for convenience
+  const colliderConfigs = { weapons: weaponsConfig, player: playerConfig };
+  Object.keys(colliderConfigs).forEach((typeName) => {
+    Object.keys(colliderConfigs[typeName]).forEach((groupName) => {
+      const config = colliderConfigs[typeName][groupName].colliderEnemyAction;
+      const targetGroupDefinition = config.targetGroupDefinition;
+      let originGroup;
+      if (typeName === "player") originGroup = player;
+      else originGroup = args.groups[typeName][groupName].group;
+      const targetGroup =
+        args.groups[targetGroupDefinition.typeName][targetGroupDefinition.name]
+          .group;
+
+      Object.assign(config.action, {
+        originGroup,
+        targetGroup,
+        physics,
+        player,
+        scene,
+      });
+
+      physics.add.collider(originGroup, targetGroup, config.action);
+    });
   });
 };
 
-const createTimers = (scene) => {
-  const { physics, player, enemyGroup, weapons, time } = scene;
+const createTimers = (args) => {
+  const { physics, player, groups, time } = args;
   const timerConfigs = { ...weaponsConfig, ...enemiesConfig };
 
   const timers = Object.keys(timerConfigs).map((key) => {
@@ -22,9 +41,9 @@ const createTimers = (scene) => {
       callback: () =>
         config.timerAction({
           physics,
-          enemyGroup,
+          enemyGroup: groups.enemies.bunny.group,
           player,
-          weapons,
+          weapons: groups.weapons,
         }),
     };
   });

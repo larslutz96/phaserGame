@@ -20,21 +20,24 @@ export class PlayGame extends Scene {
   }
 
   init() {
-    this.currentWave = 1;
     this.controlKeys = createControlls(this.input, this.controlKeys);
     if (!this.anims.anims.entries.left) createAnims(this.anims);
   }
 
   create() {
-    const { physics, time, currentWave, scene } = this;
-    // add player, enemies group and bullets group
+    const { physics, time, scene } = this;
+    // add player
     const player = (this.player = createPlayer(physics));
-    const enemyGroup = (this.enemyGroup = physics.add.group());
+    // enemies
+    const bunnyGroup = (this.enemyGroup = physics.add.group());
+    const enemies = {
+      bunny: {
+        group: bunnyGroup,
+      },
+    };
+    // weapons
     const bulletGroup = physics.add.group();
     const axeGroup = physics.add.group();
-
-    const newsdf = new Weapon(scene.scene, 450, 450, "bunny", 10);
-
     const weapons = {
       bullet: {
         group: bulletGroup,
@@ -48,17 +51,25 @@ export class PlayGame extends Scene {
         displayWidth: 50,
       },
     };
+    
 
-    createTimers({ physics, player, enemyGroup, weapons, time });
+    createTimers({
+      physics,
+      player,
+      groups: {
+        enemies,
+        weapons,
+      },
+      time,
+    });
 
     createColliders({
       groups: {
-        enemyGroup,
+        enemies,
         weapons,
       },
       player,
       physics,
-      currentWave,
       scene,
     });
   }
@@ -66,7 +77,6 @@ export class PlayGame extends Scene {
   // metod to be called at each frame
   update() {
     const { player, enemyGroup, controlKeys, scene, physics } = this;
-
     // set movement direction according to keys pressed
     let movementDirection = new Phaser.Math.Vector2(0, 0);
     movementDirection = checkControllsPressed(

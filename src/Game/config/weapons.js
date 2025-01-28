@@ -5,11 +5,14 @@ export const weaponsConfig = {
     damage: 10,
     speed: 300,
     cooldown: 500,
-    colliderEnemyAction: (bullet, enemy, enemyGroup, bulletGroup) => {
-      bulletGroup.killAndHide(bullet);
-      bullet.body.checkCollision.none = true;
-      enemyGroup.killAndHide(enemy);
-      enemy.body.checkCollision.none = true;
+    colliderEnemyAction: {
+      targetGroupDefinition: { name: "bunny", typeName: "enemies" },
+      action: function (bullet, enemy) {
+        this.originGroup.killAndHide(bullet);
+        bullet.body.checkCollision.none = true;
+        this.targetGroup.killAndHide(enemy);
+        enemy.body.checkCollision.none = true;
+      },
     },
     timerAction: ({ physics, player, enemyGroup, weapons }) =>
       timerWeaponsAction(physics, player, enemyGroup, weapons),
@@ -18,10 +21,13 @@ export const weaponsConfig = {
     damage: 50,
     speed: 150,
     cooldown: 1000,
-    colliderEnemyAction: (axe, enemy, enemyGroup, player, physics) => {
-      physics.moveToObject(axe, player, weaponsConfig.axe.speed);
-      enemyGroup.killAndHide(enemy);
-      enemy.body.checkCollision.none = true;
+    colliderEnemyAction: {
+      targetGroupDefinition: { name: "bunny", typeName: "enemies" },
+      action: function (axe, enemy) {
+        this.physics.moveToObject(axe, this.player, weaponsConfig.axe.speed);
+        this.targetGroup.killAndHide(enemy);
+        enemy.body.checkCollision.none = true;
+      },
     },
     timerAction: ({ physics, enemyGroup, player, weapons }) =>
       timerWeaponsAction(physics, player, enemyGroup, weapons),

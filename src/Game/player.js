@@ -1,8 +1,14 @@
 import { gameOptions } from "./config/gameOptions"; // game options
 
-const colPlayerEnemyAction = (currentWave, scene) => {
-  currentWave = 1;
-  scene.restart();
+const playerConfig = {
+  player1: {
+    colliderEnemyAction: {
+      targetGroupDefinition: { name: "bunny", typeName: "enemies" },
+      action: function () {
+        this.scene.restart();
+      },
+    },
+  },
 };
 
 function createPlayer(physics) {
@@ -32,4 +38,4 @@ function setPlayerVelocity(player, movementDirection) {
   }
 }
 
-export { createPlayer, setPlayerVelocity, colPlayerEnemyAction };
+export { createPlayer, setPlayerVelocity, playerConfig };
