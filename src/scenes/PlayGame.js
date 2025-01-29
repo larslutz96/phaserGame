@@ -6,8 +6,10 @@ import { createTimers } from "../Game/utils";
 import { createControlls, checkControllsPressed } from "../Game/gameControlls";
 import { Weapon } from "../Game/classes/Weapon";
 import { enemiesConfig } from "../Game/config/enemies";
+import { xpsConfig } from "../Game/config/xps";
 import { Enemy } from "../Game/classes/Enemy";
 import { Player } from "../Game/classes/Player";
+import { XP } from "../Game/classes/XP";
 
 // PlayGame class extends Phaser.Scene class
 export class PlayGame extends Scene {
@@ -25,6 +27,13 @@ export class PlayGame extends Scene {
     // create player
     const player = (this.player = new Player(scene.scene, playerConfig));
     player.create();
+
+    // create xp
+    const xpGroup = (this.xpGroup = {});
+    Object.entries(xpsConfig).forEach(([name, config]) => {
+      // Create a new weapon for each config
+      xpGroup[name] = new XP(scene.scene, config);
+    });
 
     // create enemies
     const enemies = (this.enemies = {});
@@ -57,6 +66,8 @@ export class PlayGame extends Scene {
     player.addColliders();
 
     this.controlKeys = createControlls(this.input);
+
+    // create animations
     if (!this.anims.anims.entries.left)
       createAnims(this.anims, this.player.texture);
   }
@@ -75,6 +86,7 @@ export class PlayGame extends Scene {
 
     player.setPlayerVelocity(movementDirection);
 
+    // move all enemies towards player
     Object.keys(enemies).forEach((enemyName) => {
       enemies[enemyName].moveTowards(player.group);
     });

@@ -1,3 +1,9 @@
+const weaponActionFunctions = {
+  homingWeapon(weapon, scene, speed) {
+    scene.physics.moveToObject(weapon, scene.player.group, speed);
+  },
+};
+
 export const weaponsConfig = {
   bullet: {
     texture: "bullet",
@@ -7,12 +13,9 @@ export const weaponsConfig = {
     colliderActions: [
       {
         targetGroupDefinition: { typeName: "enemies" },
-        callback: function (bullet, enemy) {
-          this.group.killAndHide(bullet);
-          bullet.body.checkCollision.none = true;
-          const enemyGroup = this.scene.enemies[enemy.texture.key].group;
-          enemyGroup.killAndHide(enemy);
-          enemy.body.checkCollision.none = true;
+        callback: function (weapon, enemy) {
+          this.scene.enemies[enemy.texture.key].kill(enemy);
+          this.kill(weapon);
         },
       },
     ],
@@ -26,12 +29,10 @@ export const weaponsConfig = {
     colliderActions: [
       {
         targetGroupDefinition: { typeName: "enemies" },
-        callback: function (axe, enemy) {
-          const scene = this.scene;
-          scene.physics.moveToObject(axe, scene.player.group, this.speed);
-          const enemyGroup = this.scene.enemies[enemy.texture.key].group;
-          enemyGroup.killAndHide(enemy);
-          enemy.body.checkCollision.none = true;
+        callback: function (weapon, enemy) {
+          const { scene, speed } = this;
+          this.scene.enemies[enemy.texture.key].kill(enemy);
+          weaponActionFunctions.homingWeapon(weapon, scene, speed);
         },
       },
     ],

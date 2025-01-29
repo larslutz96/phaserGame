@@ -22,7 +22,6 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, config) {
     super(scene, 5, 5, config.texture);
     this.scene = scene;
-    this.name = Object.keys(config)[0];
 
     // Dynamically assign all properties from config
     Object.entries(config).forEach(([key, value]) => {
@@ -34,12 +33,13 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   create() {
-    const { scene, texture, group, displayWidth } = this;
+    const { scene, texture, group, displayWidth, name } = this;
     const spawnPoint = Phaser.Geom.Rectangle.RandomOutside(
       outerRectangle,
       innerRectangle,
     );
     const enemy = scene.physics.add.sprite(spawnPoint.x, spawnPoint.y, texture);
+    enemy.name = name;
     if (displayWidth) {
       enemy.displayWidth = displayWidth;
       enemy.scaleY = enemy.scaleX;
@@ -51,6 +51,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     const { scene, group } = this;
     const colliderActions = this.colliderActions;
     colliderActions.forEach(({ targetGroupDefinition, callback }) => {
+      // either use a specific group or all of them
       if (targetGroupDefinition.name) {
         const targetGroup =
           scene[targetGroupDefinition.typeName]?.[targetGroupDefinition.name]
@@ -85,5 +86,31 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     group.getMatching("visible", true).forEach((child) => {
       scene.physics.moveToObject(child, destination, speed);
     });
+  }
+
+  onDeath(x, y) {
+    const { scene, xpValue } = this;
+
+    // Create XP drop
+    const xpDefinition = scene.xpGroup[xpValue];
+    xpDefinition.create(x, y);
+
+    // Make XP float slightly upwards when dropped
+    scene.tweens.add({
+      targets: xpDefinition.group,
+      y: y - 10,
+      duration: 300,
+      yoyo: true,
+      ease: "Power1",
+    });
+  }
+
+  kill(child) {
+    const { group } = this;
+    group.killAndHide(child);
+    child.body.checkCollision.none = true;
+
+    // Drop XP
+    this.onDeath(child.x, child.y);
   }
 }

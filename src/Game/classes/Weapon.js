@@ -13,7 +13,7 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
   }
 
   fire() {
-    const { scene, texture, group, displayWidth, speed } = this;
+    const { scene, texture, group, displayWidth, speed, name } = this;
     const enemieNames = Object.keys(scene.enemies);
     // Function to calculate distance
     const distanceToPlayer = (x1, y1, x2, y2) => {
@@ -46,18 +46,19 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
     });
 
     if (closestEnemy != null) {
-      const sprite = scene.physics.add.sprite(
+      const weapon = scene.physics.add.sprite(
         scene.player.group.x,
         scene.player.group.y,
         texture,
       );
-      group.add(sprite);
+      weapon.name = name;
+      group.add(weapon);
       if (displayWidth) {
-        sprite.displayWidth = displayWidth;
-        sprite.scaleY = sprite.scaleX;
+        weapon.displayWidth = displayWidth;
+        weapon.scaleY = weapon.scaleX;
       }
 
-      scene.physics.moveToObject(sprite, closestEnemyChild, speed);
+      scene.physics.moveToObject(weapon, closestEnemyChild, speed);
     }
   }
 
@@ -65,6 +66,7 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
     const { scene, group } = this;
     const colliderActions = this.colliderActions;
     colliderActions.forEach(({ targetGroupDefinition, callback }) => {
+      // either use a specific group or all of them
       if (targetGroupDefinition.name) {
         const targetGroup =
           scene[targetGroupDefinition.typeName]?.[targetGroupDefinition.name]
@@ -81,5 +83,11 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
         });
       }
     });
+  }
+
+  kill(child) {
+    const { group } = this;
+    group.killAndHide(child);
+    child.body.checkCollision.none = true;
   }
 }

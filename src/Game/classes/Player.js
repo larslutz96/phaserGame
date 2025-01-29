@@ -12,19 +12,21 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   }
 
   create() {
-    const { scene, texture } = this;
-    const playerGroup = (this.group = scene.physics.add.sprite(
+    const { scene, texture, name } = this;
+    const player = (this.group = scene.physics.add.sprite(
       gameOptions.gameSize.width / 2,
       gameOptions.gameSize.height / 2,
       texture,
     ));
-    playerGroup.setBounce(0.2);
-    playerGroup.setCollideWorldBounds(true);
+    player.name = name;
+    player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
   }
 
   addColliders() {
     const { scene, group, colliderActions } = this;
     colliderActions.forEach(({ targetGroupDefinition, callback }) => {
+      // either use a specific group or all of them
       if (targetGroupDefinition.name) {
         const targetGroup =
           scene[targetGroupDefinition.typeName]?.[targetGroupDefinition.name]
@@ -32,12 +34,17 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
         scene.physics.add.collider(group, targetGroup, callback.bind(this));
       } else {
         const targets = scene[targetGroupDefinition.typeName];
-        Object.values(targets).forEach((classDefinition) => {
-          scene.physics.add.collider(
-            group,
-            classDefinition.group,
-            callback.bind(this),
-          );
+        Object.values(targets).forEach((target) => {
+          // check if its a class or directly a phyisics group
+          if (target.type !== "PhysicsGroup") {
+            scene.physics.add.collider(
+              group,
+              target.group,
+              callback.bind(this),
+            );
+          } else {
+            scene.physics.add.collider(group, target, callback.bind(this));
+          }
         });
       }
     });
