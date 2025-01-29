@@ -1,52 +1,24 @@
-import { weaponsConfig } from "./config/weapons";
-import { enemiesConfig } from "./config/enemies";
-import { playerConfig } from "./player";
-
-const createColliders = (args) => {
-  const { physics, player, scene } = args; // Extract `physics` for convenience
-  const colliderConfigs = { weapons: weaponsConfig, player: playerConfig };
-  Object.keys(colliderConfigs).forEach((typeName) => {
-    Object.keys(colliderConfigs[typeName]).forEach((groupName) => {
-      const config = colliderConfigs[typeName][groupName].colliderEnemyAction;
-      const targetGroupDefinition = config.targetGroupDefinition;
-      let originGroup;
-      if (typeName === "player") originGroup = player;
-      else originGroup = args.groups[typeName][groupName].group;
-      const targetGroup =
-        args.groups[targetGroupDefinition.typeName][targetGroupDefinition.name]
-          .group;
-
-      Object.assign(config.action, {
-        originGroup,
-        targetGroup,
-        physics,
-        player,
-        scene,
-      });
-
-      physics.add.collider(originGroup, targetGroup, config.action);
-    });
-  });
-};
-
 const createTimers = (args) => {
-  const { physics, player, groups, time } = args;
-  const timerConfigs = { ...weaponsConfig, ...enemiesConfig };
+  const { classes, time } = args;
+  const timers = Object.keys(classes).flatMap((typeName) =>
+    Object.keys(classes[typeName]).map((className) => {
+      const classDefinition = classes[typeName][className];
+      let action;
 
-  const timers = Object.keys(timerConfigs).map((key) => {
-    const config = timerConfigs[key];
-    return {
-      delay: config.cooldown,
-      loop: true,
-      callback: () =>
-        config.timerAction({
-          physics,
-          enemyGroup: groups.enemies.bunny.group,
-          player,
-          weapons: groups.weapons,
-        }),
-    };
-  });
+      if (typeName === "enemies") {
+        action = classDefinition.create;
+      } else {
+        action = () => classDefinition.fire();
+      }
+
+      return {
+        delay: classDefinition.cooldown,
+        loop: true,
+        callback: action,
+        callbackScope: classDefinition,
+      };
+    }),
+  );
 
   // Add timers to the Phaser time system
   timers.forEach((timer) => {
@@ -54,8 +26,9 @@ const createTimers = (args) => {
       delay: timer.delay,
       loop: timer.loop,
       callback: timer.callback,
+      callbackScope: timer.callbackScope, // Ensure "this" refers to the class instance
     });
   });
 };
 
-export { createColliders, createTimers };
+export { createTimers };

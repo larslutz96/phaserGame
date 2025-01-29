@@ -1,7 +1,7 @@
-function createAnims(anims) {
+function createAnims(anims, texture) {
   anims.create({
     key: "left",
-    frames: anims.generateFrameNumbers("dude", { start: 0, end: 2 }),
+    frames: anims.generateFrameNumbers(texture, { start: 0, end: 2 }),
     frameRate: 10,
     repeat: 0,
   });
@@ -12,7 +12,7 @@ function createAnims(anims) {
   });
   anims.create({
     key: "right",
-    frames: anims.generateFrameNumbers("dude", { start: 5, end: 7 }),
+    frames: anims.generateFrameNumbers(texture, { start: 5, end: 7 }),
     frameRate: 10,
     repeat: 0,
   });

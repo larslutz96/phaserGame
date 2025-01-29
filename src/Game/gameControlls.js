@@ -1,6 +1,6 @@
-function createControlls(input, controlKeys) {
+function createControlls(input) {
   const keyboard = input.keyboard;
-  controlKeys = keyboard.addKeys({
+  const controlKeys = keyboard.addKeys({
     up: Phaser.Input.Keyboard.KeyCodes.W,
     left: Phaser.Input.Keyboard.KeyCodes.A,
     down: Phaser.Input.Keyboard.KeyCodes.S,
@@ -10,7 +10,7 @@ function createControlls(input, controlKeys) {
   return controlKeys;
 }
 
-function checkControllsPressed(controlKeys, player, scene, movementDirection) {
+function checkControllsPressed(scene, player, controlKeys, movementDirection) {
   if (controlKeys.right.isDown) {
     movementDirection.x++;
     player.anims.play("right", true);

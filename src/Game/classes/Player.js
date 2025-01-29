@@ -1,16 +1,61 @@
-export class Player extends Phaser.Physics.Arcade.Sprite {
-  constructor(scene, x, y, texture, damage) {
-    super(scene, x, y, texture);
-    this.scene = scene;
-    this.damage = damage;
+import { gameOptions } from "../config/gameOptions";
 
-    // Add weapon to the physics system
-    scene.physics.world.enable(this);
-    scene.add.existing(this);
+export class Player extends Phaser.Physics.Arcade.Sprite {
+  constructor(scene, config) {
+    super(scene, 400, 400, config.texture);
+    this.scene = scene;
+
+    // Dynamically assign all properties from config
+    Object.entries(config).forEach(([key, value]) => {
+      this[key] = value;
+    });
   }
 
-  fire(x, y, direction) {
-    this.setPosition(x, y);
-    this.setVelocity(direction.x * 300, direction.y * 300); // Adjust speed
+  create() {
+    const { scene, texture } = this;
+    const playerGroup = (this.group = scene.physics.add.sprite(
+      gameOptions.gameSize.width / 2,
+      gameOptions.gameSize.height / 2,
+      texture,
+    ));
+    playerGroup.setBounce(0.2);
+    playerGroup.setCollideWorldBounds(true);
+  }
+
+  addColliders() {
+    const { scene, group, colliderActions } = this;
+    colliderActions.forEach(({ targetGroupDefinition, callback }) => {
+      let targetGroup;
+      if (targetGroupDefinition.typeName) {
+        targetGroup =
+          scene[targetGroupDefinition.typeName]?.[targetGroupDefinition.name]
+            ?.group;
+      } else targetGroup = scene[targetGroupDefinition.name];
+
+      if (targetGroup) {
+        scene.physics.add.collider(group, targetGroup, callback.bind(this));
+      } else {
+        console.warn(
+          `Collider target group not found: ${targetGroupDefinition.name}`,
+        );
+      }
+    });
+  }
+
+  setPlayerVelocity(movementDirection) {
+    const { group } = this;
+    // set player velocity according to movement direction
+    group.setVelocity(0, 0);
+    if (movementDirection.x == 0 || movementDirection.y == 0) {
+      group.setVelocity(
+        movementDirection.x * gameOptions.playerSpeed,
+        movementDirection.y * gameOptions.playerSpeed,
+      );
+    } else {
+      group.setVelocity(
+        (movementDirection.x * gameOptions.playerSpeed) / Math.sqrt(2),
+        (movementDirection.y * gameOptions.playerSpeed) / Math.sqrt(2),
+      );
+    }
   }
 }
