@@ -24,22 +24,24 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
 
     let closestEnemy;
     let closestEnemyChild;
+    let closestDistance = 9999;
     enemieNames.forEach((name) => {
       const currentEnemyDefintion = scene.enemies[name];
-      let closestDistance = 9999;
       const currentClosestEnemyChild = currentEnemyDefintion.getClosestTo(
         scene.player.group,
       );
-      const curDistance = distanceToPlayer(
-        currentClosestEnemyChild.x,
-        currentClosestEnemyChild.y,
-        scene.player.group.x,
-        scene.player.group.y,
-      );
-      if (closestDistance > curDistance) {
-        closestDistance = curDistance;
-        closestEnemyChild = currentClosestEnemyChild;
-        closestEnemy = currentEnemyDefintion.group;
+      if (currentClosestEnemyChild) {
+        const curDistance = distanceToPlayer(
+          currentClosestEnemyChild.x,
+          currentClosestEnemyChild.y,
+          scene.player.group.x,
+          scene.player.group.y,
+        );
+        if (closestDistance > curDistance) {
+          closestDistance = curDistance;
+          closestEnemyChild = currentClosestEnemyChild;
+          closestEnemy = currentEnemyDefintion.group;
+        }
       }
     });
 
@@ -60,26 +62,23 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
   }
 
   addColliders() {
+    const { scene, group } = this;
     const colliderActions = this.colliderActions;
     colliderActions.forEach(({ targetGroupDefinition, callback }) => {
-      let targetGroup;
-      if (targetGroupDefinition.typeName) {
-        targetGroup =
-          this.scene[targetGroupDefinition.typeName]?.[
-            targetGroupDefinition.name
-          ]?.group;
-      } else targetGroup = this.scene[targetGroupDefinition.name];
-
-      if (targetGroup) {
-        this.scene.physics.add.collider(
-          this.group,
-          targetGroup,
-          callback.bind(this),
-        );
+      if (targetGroupDefinition.name) {
+        const targetGroup =
+          scene[targetGroupDefinition.typeName]?.[targetGroupDefinition.name]
+            ?.group;
+        scene.physics.add.collider(group, targetGroup, callback.bind(this));
       } else {
-        console.warn(
-          `Collider target group not found: ${targetGroupDefinition.name}`,
-        );
+        const targets = scene[targetGroupDefinition.typeName];
+        Object.values(targets).forEach((classDefinition) => {
+          scene.physics.add.collider(
+            group,
+            classDefinition.group,
+            callback.bind(this),
+          );
+        });
       }
     });
   }

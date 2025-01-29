@@ -3,7 +3,7 @@ export const playerConfig = {
   speed: "100",
   colliderActions: [
     {
-      targetGroupDefinition: { name: "bunny", typeName: "enemies" },
+      targetGroupDefinition: { typeName: "enemies" },
       callback: function () {
         this.scene.scene.restart();
       },

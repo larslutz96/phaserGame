@@ -29,6 +29,8 @@ export class Preloader extends Scene {
     this.load.image("enemy", "sprites/enemy.png"); // the big circle, aka the planet
     this.load.image("bunny", "sprites/bunny.png"); // the player
     this.load.image("bullet", "sprites/bullet.png"); // the spike
+    this.load.image("samu", "sprites/samu.png"); // the spike
+    this.load.image("joni", "sprites/joni.png"); // the spike
     this.load.spritesheet("dude", "sprites/dude.png", {
       frameWidth: 32,
       frameHeight: 48,

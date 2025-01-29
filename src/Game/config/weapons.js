@@ -6,11 +6,12 @@ export const weaponsConfig = {
     cooldown: 500,
     colliderActions: [
       {
-        targetGroupDefinition: { name: "bunny", typeName: "enemies" },
+        targetGroupDefinition: { typeName: "enemies" },
         callback: function (bullet, enemy) {
           this.group.killAndHide(bullet);
           bullet.body.checkCollision.none = true;
-          this.scene.enemies.bunny.group.killAndHide(enemy);
+          const enemyGroup = this.scene.enemies[enemy.texture.key].group;
+          enemyGroup.killAndHide(enemy);
           enemy.body.checkCollision.none = true;
         },
       },
@@ -21,14 +22,15 @@ export const weaponsConfig = {
     damage: 50,
     speed: 150,
     displayWidth: 20,
-    cooldown: 250,
+    cooldown: 500,
     colliderActions: [
       {
-        targetGroupDefinition: { name: "bunny", typeName: "enemies" },
+        targetGroupDefinition: { typeName: "enemies" },
         callback: function (axe, enemy) {
           const scene = this.scene;
           scene.physics.moveToObject(axe, scene.player.group, this.speed);
-          scene.enemies.bunny.group.killAndHide(enemy);
+          const enemyGroup = this.scene.enemies[enemy.texture.key].group;
+          enemyGroup.killAndHide(enemy);
           enemy.body.checkCollision.none = true;
         },
       },

@@ -25,19 +25,20 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   addColliders() {
     const { scene, group, colliderActions } = this;
     colliderActions.forEach(({ targetGroupDefinition, callback }) => {
-      let targetGroup;
-      if (targetGroupDefinition.typeName) {
-        targetGroup =
+      if (targetGroupDefinition.name) {
+        const targetGroup =
           scene[targetGroupDefinition.typeName]?.[targetGroupDefinition.name]
             ?.group;
-      } else targetGroup = scene[targetGroupDefinition.name];
-
-      if (targetGroup) {
         scene.physics.add.collider(group, targetGroup, callback.bind(this));
       } else {
-        console.warn(
-          `Collider target group not found: ${targetGroupDefinition.name}`,
-        );
+        const targets = scene[targetGroupDefinition.typeName];
+        Object.values(targets).forEach((classDefinition) => {
+          scene.physics.add.collider(
+            group,
+            classDefinition.group,
+            callback.bind(this),
+          );
+        });
       }
     });
   }

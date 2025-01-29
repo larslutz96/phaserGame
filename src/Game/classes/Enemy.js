@@ -22,6 +22,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, config) {
     super(scene, 5, 5, config.texture);
     this.scene = scene;
+    this.name = Object.keys(config)[0];
 
     // Dynamically assign all properties from config
     Object.entries(config).forEach(([key, value]) => {
@@ -33,36 +34,37 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   create() {
-    const { scene, texture, group } = this;
+    const { scene, texture, group, displayWidth } = this;
     const spawnPoint = Phaser.Geom.Rectangle.RandomOutside(
       outerRectangle,
       innerRectangle,
     );
     const enemy = scene.physics.add.sprite(spawnPoint.x, spawnPoint.y, texture);
+    if (displayWidth) {
+      enemy.displayWidth = displayWidth;
+      enemy.scaleY = enemy.scaleX;
+    }
     group.add(enemy);
   }
 
   addColliders() {
+    const { scene, group } = this;
     const colliderActions = this.colliderActions;
     colliderActions.forEach(({ targetGroupDefinition, callback }) => {
-      let targetGroup;
-      if (targetGroupDefinition.typeName) {
-        targetGroup =
-          this.scene[targetGroupDefinition.typeName]?.[
-            targetGroupDefinition.name
-          ]?.group;
-      } else targetGroup = this.scene[targetGroupDefinition.name];
-
-      if (targetGroup) {
-        this.scene.physics.add.collider(
-          this.group,
-          targetGroup,
-          callback.bind(this),
-        );
+      if (targetGroupDefinition.name) {
+        const targetGroup =
+          scene[targetGroupDefinition.typeName]?.[targetGroupDefinition.name]
+            ?.group;
+        scene.physics.add.collider(group, targetGroup, callback.bind(this));
       } else {
-        console.warn(
-          `Collider target group not found: ${targetGroupDefinition.name}`,
-        );
+        const targets = scene[targetGroupDefinition.typeName];
+        Object.values(targets).forEach((classDefinition) => {
+          scene.physics.add.collider(
+            group,
+            classDefinition.group,
+            callback.bind(this),
+          );
+        });
       }
     });
   }
