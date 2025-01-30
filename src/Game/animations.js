@@ -7,7 +7,7 @@ function createAnims(anims, texture) {
   });
   anims.create({
     key: "turn",
-    frames: [{ key: "dude", frame: 4 }],
+    frames: [{ key: "player", frame: 4 }],
     frameRate: 20,
   });
   anims.create({

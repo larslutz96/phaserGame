@@ -4,6 +4,7 @@ export const enemiesConfig = {
     cooldown: 20000,
     speed: 100,
     texture: "bunny",
+    type: "image",
     xpValue: "small",
   },
   samu: {
@@ -11,6 +12,7 @@ export const enemiesConfig = {
     cooldown: 500,
     speed: 100,
     texture: "samu",
+    type: "image",
     displayWidth: 30,
     xpValue: "medium",
   },
@@ -19,6 +21,7 @@ export const enemiesConfig = {
     cooldown: 2000,
     speed: 100,
     texture: "joni",
+    type: "image",
     displayWidth: 30,
     xpValue: "large",
   },

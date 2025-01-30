@@ -21,6 +21,15 @@ export class XP extends Phaser.Physics.Arcade.Sprite {
       xp.scaleY = xp.scaleX;
     }
     group.add(xp);
+
+    // Make XP float slightly upwards when dropped
+    scene.tweens.add({
+      targets: xp,
+      y: y - 10,
+      duration: 300,
+      yoyo: true,
+      ease: "Power1",
+    });
   }
 
   kill(child) {

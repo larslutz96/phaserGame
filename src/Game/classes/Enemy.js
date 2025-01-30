@@ -92,17 +92,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     const { scene, xpValue } = this;
 
     // Create XP drop
-    const xpDefinition = scene.xpGroup[xpValue];
-    xpDefinition.create(x, y);
-
-    // Make XP float slightly upwards when dropped
-    scene.tweens.add({
-      targets: xpDefinition.group,
-      y: y - 10,
-      duration: 300,
-      yoyo: true,
-      ease: "Power1",
-    });
+    scene.xpGroup[xpValue].create(x, y);
   }
 
   kill(child) {

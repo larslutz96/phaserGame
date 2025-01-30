@@ -6,7 +6,9 @@ const weaponActionFunctions = {
 
 export const weaponsConfig = {
   bullet: {
+    name: "bullet",
     texture: "bullet",
+    type: "image",
     damage: 10,
     speed: 300,
     cooldown: 500,
@@ -21,7 +23,9 @@ export const weaponsConfig = {
     ],
   },
   axe: {
+    name: "axe",
     texture: "axe",
+    type: "image",
     damage: 50,
     speed: 150,
     displayWidth: 20,

@@ -1,0 +1,51 @@
+{
+  "axe": {
+    "path": "axe.png",
+    "displayWidth": 20,
+    "name": "axe",
+    "texture": "axe",
+    "type": "image"
+  },
+  "bullet": {
+    "path": "bullet.png",
+    "name": "bullet",
+    "texture": "bullet",
+    "type": "image"
+  },
+  "bunny": {
+    "path": "bunny.png",
+    "name": "bunny",
+    "texture": "bunny",
+    "type": "image"
+  },
+  "enemy": {
+    "path": "enemy.png"
+  },
+  "joni": {
+    "path": "joni.png",
+    "displayWidth": 30,
+    "name": "joni",
+    "texture": "joni",
+    "type": "image"
+  },
+  "player": {
+    "path": "player.png",
+    "name": "player",
+    "texture": "player",
+    "type": "spritesheet"
+  },
+  "samu": {
+    "path": "samu.png",
+    "displayWidth": 30,
+    "name": "samu",
+    "texture": "samu",
+    "type": "image"
+  },
+  "smallXP": {
+    "path": "smallXP.png",
+    "displayWidth": 20,
+    "name": "large",
+    "texture": "smallXP",
+    "type": "image"
+  }
+}

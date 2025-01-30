@@ -1,5 +1,7 @@
 export const playerConfig = {
-  texture: "dude",
+  name: "player",
+  texture: "player",
+  type: "spritesheet",
   speed: "100",
   playerXP: 0,
   colliderActions: [

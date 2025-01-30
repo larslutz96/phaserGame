@@ -25,18 +25,38 @@ export class Preloader extends Scene {
   preload() {
     //  Load the assets for the game - Replace with your own assets
     this.load.setPath("assets");
-    this.load.image("logo", "logo.png");
-    this.load.image("enemy", "sprites/enemy.png"); // the big circle, aka the planet
-    this.load.image("smallXP", "sprites/smallXP.png"); // the big circle, aka the planet
-    this.load.image("bunny", "sprites/bunny.png"); // the player
-    this.load.image("bullet", "sprites/bullet.png"); // the spike
-    this.load.image("samu", "sprites/samu.png"); // the spike
-    this.load.image("joni", "sprites/joni.png"); // the spike
-    this.load.spritesheet("dude", "sprites/dude.png", {
-      frameWidth: 32,
-      frameHeight: 48,
+
+    const self = this;
+
+    this.load.json("assetList", "assets.json");
+
+    this.load.on("progress", function (value) {
+      console.log("Loading progress:", value);
     });
-    this.load.image("axe", "sprites/axe.png"); // the spike
+
+    this.load.on("complete", function () {
+      console.log("complete");
+      const assetList = self.cache.json.get("assetList");
+
+      Object.values(assetList).forEach((image) => {
+        const { path, type, texture, frameWidth = 32, frameHeight = 48 } = image;
+        const name = texture || path.replace(".png","")
+        try {
+          if (type === "spritesheet") {
+            self.load.spritesheet(name, `sprites/${path}`, {
+              frameWidth,
+              frameHeight,
+            });
+          } else {
+            self.load.image(name, `sprites/${path}`);
+          }
+        } catch (err) {
+          console.error(`Error loading asset for ${name}:`, err);
+        }
+      });
+
+      self.load.start();
+    });
   }
 
   create() {
