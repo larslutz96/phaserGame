@@ -65,7 +65,7 @@ export class PlayGame extends Scene {
 
     // create animations
     if (!this.anims.anims.entries.left)
-      createAnims(this.anims, this.player.texture);
+      createAnims(this.anims, this.player.config.texture);
   }
 
   // method to be called at each frame

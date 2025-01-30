@@ -3,9 +3,10 @@ export class XP extends Phaser.Physics.Arcade.Sprite {
     super(scene, 5, 5, config.texture);
     this.scene = scene;
 
-    // Dynamically assign all properties from config
+    // Dynamically assign all config from config
+    this.config = {};
     Object.entries(config).forEach(([key, value]) => {
-      this[key] = value;
+      this.config[key] = value;
     });
 
     // Add enemy group to scene's physics system
@@ -13,12 +14,15 @@ export class XP extends Phaser.Physics.Arcade.Sprite {
   }
 
   create(x, y, xpValue) {
-    const { scene, texture, group, displayWidth, name } = this;
-    const xp = scene.physics.add.sprite(x, y, texture);
-    xp.name = name;
+    const { scene, group, config } = this;
+    const xp = scene.physics.add.sprite(x, y, config.texture);
     xp.xpValue = xpValue;
-    if (displayWidth) {
-      xp.displayWidth = displayWidth;
+
+    // Dynamically assign all config from this
+    Object.assign(xp, config);
+
+    if (config.displayWidth) {
+      xp.displayWidth = config.displayWidth;
       xp.scaleY = xp.scaleX;
     }
     group.add(xp);
@@ -45,12 +49,11 @@ export class XP extends Phaser.Physics.Arcade.Sprite {
     const visibleChildren = group.getMatching("visible", true);
     if (visibleChildren.length >= 10) {
       let xpValue = 0;
-      visibleChildren.forEach((child) => {
-        xpValue += child.xpValue;
+      visibleChildren.slice(1).forEach((child) => {
+        xpValue = xpValue + child.xpValue;
         this.destroy(child);
       });
-      // Create a new sprite to combine all children into
-      this.create(visibleChildren[0].x, visibleChildren[0].y, xpValue);
+      visibleChildren[0].xpValue = xpValue;
     }
   }
 }

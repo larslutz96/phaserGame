@@ -6,6 +6,8 @@ export const enemiesConfig = {
     texture: "bunny",
     textureType: "image",
     xpValue: 1,
+    health: 10,
+    damage: 10,
   },
   samu: {
     name: "samu",
@@ -15,6 +17,8 @@ export const enemiesConfig = {
     textureType: "image",
     displayWidth: 30,
     xpValue: 5,
+    damage: 50,
+    health: 50,
   },
   joni: {
     name: "joni",
@@ -24,5 +28,7 @@ export const enemiesConfig = {
     textureType: "image",
     displayWidth: 30,
     xpValue: 10,
+    damage: 100,
+    health: 100,
   },
 };

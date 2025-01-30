@@ -12,7 +12,7 @@ const createTimers = (args) => {
       }
 
       return {
-        delay: classDefinition.cooldown,
+        delay: classDefinition.config.cooldown,
         loop: true,
         callback: action,
         callbackScope: classDefinition,

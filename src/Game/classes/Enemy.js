@@ -22,10 +22,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, config) {
     super(scene, 5, 5, config.texture);
     this.scene = scene;
+    this.config = {};
 
-    // Dynamically assign all properties from config
+    // Dynamically assign all config from config
+    this.config = {};
     Object.entries(config).forEach(([key, value]) => {
-      this[key] = value;
+      this.config[key] = value;
     });
 
     // Add enemy group to scene's physics system
@@ -33,15 +35,18 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   create() {
-    const { scene, texture, group, displayWidth, name } = this;
+    const { scene, texture, group, config } = this;
     const spawnPoint = Phaser.Geom.Rectangle.RandomOutside(
       outerRectangle,
       innerRectangle,
     );
     const enemy = scene.physics.add.sprite(spawnPoint.x, spawnPoint.y, texture);
-    enemy.name = name;
-    if (displayWidth) {
-      enemy.displayWidth = displayWidth;
+
+    // Dynamically assign all config from this
+    Object.assign(enemy, config);
+
+    if (config.displayWidth) {
+      enemy.displayWidth = config.displayWidth;
       enemy.scaleY = enemy.scaleX;
     }
     group.add(enemy);
@@ -89,10 +94,10 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   onDeath(x, y) {
-    const { scene, xpValue } = this;
+    const { scene, config } = this;
 
     // Create XP drop
-    scene.xpGroup.create(x, y, xpValue);
+    scene.xpGroup.create(x, y, config.xpValue);
   }
 
   destroy(child) {

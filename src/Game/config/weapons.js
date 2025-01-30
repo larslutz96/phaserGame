@@ -1,4 +1,8 @@
 const weaponActionFunctions = {
+  damageEnemy(enemies, enemy, damage) {
+    enemy.health = enemy.health - damage;
+    if (enemy.health <= 0) enemies.destroy(enemy);
+  },
   homingWeapon(weapon, scene, speed) {
     scene.physics.moveToObject(weapon, scene.player.group, speed);
   },
@@ -16,7 +20,8 @@ export const weaponsConfig = {
       {
         targetGroupDefinition: { typeName: "enemies" },
         callback: function (weapon, enemy) {
-          this.scene.enemies[enemy.texture.key].destroy(enemy);
+          const enemies = this.scene.enemies[enemy.name];
+          weaponActionFunctions.damageEnemy(enemies, enemy, weapon.damage);
           this.destroy(weapon);
         },
       },
@@ -35,7 +40,8 @@ export const weaponsConfig = {
         targetGroupDefinition: { typeName: "enemies" },
         callback: function (weapon, enemy) {
           const { scene, speed } = this;
-          this.scene.enemies[enemy.texture.key].destroy(enemy);
+          const enemies = this.scene.enemies[enemy.name];
+          weaponActionFunctions.damageEnemy(enemies, enemy, weapon.damage);
           weaponActionFunctions.homingWeapon(weapon, scene, speed);
         },
       },

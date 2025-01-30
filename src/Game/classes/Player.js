@@ -9,28 +9,36 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       fill: gameOptions.font.fill,
       fontStyle: gameOptions.font.fontStyle,
     });
+    this.healthText = scene.add.text(0, 20, `Health: ${config.health}`, {
+      fontSize: gameOptions.font.fontSize,
+      fill: gameOptions.font.fill,
+      fontStyle: gameOptions.font.fontStyle,
+    });
 
-    // Dynamically assign all properties from config
+    // Dynamically assign all config from config
+    this.config = {};
     Object.entries(config).forEach(([key, value]) => {
-      this[key] = value;
+      this.config[key] = value;
     });
   }
 
   create() {
-    const { scene, texture, name } = this;
+    const { scene, texture, config } = this;
     const player = (this.group = scene.physics.add.sprite(
       gameOptions.gameSize.width / 2,
       gameOptions.gameSize.height / 2,
       texture,
     ));
-    player.name = name;
+    // Dynamically assign all config from this
+    Object.assign(player, config);
     player.setBounce(0.2);
+
     player.setCollideWorldBounds(true);
   }
 
   addColliders() {
-    const { scene, group, colliderActions } = this;
-    colliderActions.forEach(({ targetGroupDefinition, callback }) => {
+    const { scene, group, config } = this;
+    config.colliderActions.forEach(({ targetGroupDefinition, callback }) => {
       // either use a specific group or all of them
       if (targetGroupDefinition.name) {
         const targetGroup =
