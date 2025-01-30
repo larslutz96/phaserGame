@@ -51,7 +51,7 @@ const relevantKeys = [
   "displayWidth",
   "name",
   "texture",
-  "type",
+  "textureType",
 ];
 
 Object.entries(configs).forEach(([configTypeKey, configData]) => {

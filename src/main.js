@@ -25,5 +25,5 @@ const config = {
   },
   scene: [Boot, Preloader, MainMenu, PlayGame, GameOver, PauseMenu],
 };
-
-export default new Phaser.Game(config);
+const game = new Phaser.Game(config);
+export default game;

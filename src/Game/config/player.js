@@ -3,7 +3,7 @@ export const playerConfig = {
   texture: "player",
   textureType: "spritesheet",
   speed: "100",
-  playerXP: 0,
+  xp: 0,
   colliderActions: [
     {
       targetGroupDefinition: { typeName: "enemies" },
@@ -14,7 +14,9 @@ export const playerConfig = {
     {
       targetGroupDefinition: { typeName: "xpGroup" },
       callback: function (player, xp) {
-        this.playerXP = this.playerXP + xp.xpValue;
+        const newXP = this.xp + xp.xpValue;
+        this.xp = newXP;
+        this.xpText.setText(`XP: ${newXP}`);
         this.scene.xpGroup.destroy(xp);
       },
     },

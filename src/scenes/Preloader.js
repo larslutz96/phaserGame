@@ -25,6 +25,7 @@ export class Preloader extends Scene {
   preload() {
     //  Load the assets for the game - Replace with your own assets
     this.load.setPath("assets");
+    this.load.audio("samu", "audio/soundeffects/samu.mp3");
 
     const self = this;
 
@@ -41,14 +42,14 @@ export class Preloader extends Scene {
       Object.values(assetList).forEach((image) => {
         const {
           path,
-          type,
+          textureType,
           texture,
           frameWidth = 32,
           frameHeight = 48,
         } = image;
         const name = texture || path.replace(".png", "");
         try {
-          if (type === "spritesheet") {
+          if (textureType === "spritesheet") {
             self.load.spritesheet(name, `sprites/${path}`, {
               frameWidth,
               frameHeight,

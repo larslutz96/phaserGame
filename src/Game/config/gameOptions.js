@@ -1,6 +1,9 @@
 export const gameOptions = {
   font: {
     fontFamily: "Arial",
+    fontSize: "32px",
+    fill: "#ffffff",
+    fontStyle: "bold",
   },
   gameSize: {
     width: 800, // width of the game, in pixels

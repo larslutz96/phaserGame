@@ -4,6 +4,11 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
   constructor(scene, config) {
     super(scene, 400, 400, config.texture);
     this.scene = scene;
+    this.xpText = scene.add.text(scene.cameras.main.width - 200, 20, `XP: 0`, {
+      fontSize: gameOptions.font.fontSize,
+      fill: gameOptions.font.fill,
+      fontStyle: gameOptions.font.fontStyle,
+    });
 
     // Dynamically assign all properties from config
     Object.entries(config).forEach(([key, value]) => {

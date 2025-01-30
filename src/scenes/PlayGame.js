@@ -71,6 +71,7 @@ export class PlayGame extends Scene {
   // method to be called at each frame
   update() {
     const { player, enemies, scene, xpGroup } = this;
+
     // set movement direction according to keys pressed
     let movementDirection = new Phaser.Math.Vector2(0, 0);
     movementDirection = checkControllsPressed(
