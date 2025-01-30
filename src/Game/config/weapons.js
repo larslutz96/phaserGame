@@ -8,7 +8,7 @@ export const weaponsConfig = {
   bullet: {
     name: "bullet",
     texture: "bullet",
-    type: "image",
+    textureType: "image",
     damage: 10,
     speed: 300,
     cooldown: 500,
@@ -16,8 +16,8 @@ export const weaponsConfig = {
       {
         targetGroupDefinition: { typeName: "enemies" },
         callback: function (weapon, enemy) {
-          this.scene.enemies[enemy.texture.key].kill(enemy);
-          this.kill(weapon);
+          this.scene.enemies[enemy.texture.key].destroy(enemy);
+          this.destroy(weapon);
         },
       },
     ],
@@ -25,7 +25,7 @@ export const weaponsConfig = {
   axe: {
     name: "axe",
     texture: "axe",
-    type: "image",
+    textureType: "image",
     damage: 50,
     speed: 150,
     displayWidth: 20,
@@ -35,7 +35,7 @@ export const weaponsConfig = {
         targetGroupDefinition: { typeName: "enemies" },
         callback: function (weapon, enemy) {
           const { scene, speed } = this;
-          this.scene.enemies[enemy.texture.key].kill(enemy);
+          this.scene.enemies[enemy.texture.key].destroy(enemy);
           weaponActionFunctions.homingWeapon(weapon, scene, speed);
         },
       },

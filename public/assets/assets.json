@@ -43,8 +43,8 @@
   },
   "smallXP": {
     "path": "smallXP.png",
-    "displayWidth": 20,
-    "name": "large",
+    "displayWidth": 8,
+    "name": "small",
     "texture": "smallXP",
     "type": "image"
   }

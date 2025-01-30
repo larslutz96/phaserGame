@@ -33,19 +33,23 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
             ?.group;
         scene.physics.add.collider(group, targetGroup, callback.bind(this));
       } else {
-        const targets = scene[targetGroupDefinition.typeName];
-        Object.values(targets).forEach((target) => {
-          // check if its a class or directly a phyisics group
-          if (target.type !== "PhysicsGroup") {
+        if (scene[targetGroupDefinition.typeName].group) {
+          scene.physics.add.collider(
+            group,
+            scene[targetGroupDefinition.typeName].group,
+            callback.bind(this),
+          );
+        } else {
+          const targets = scene[targetGroupDefinition.typeName];
+          Object.values(targets).forEach((target) => {
+            // check if its a class or directly a phyisics group
             scene.physics.add.collider(
               group,
               target.group,
               callback.bind(this),
             );
-          } else {
-            scene.physics.add.collider(group, target, callback.bind(this));
-          }
-        });
+          });
+        }
       }
     });
   }

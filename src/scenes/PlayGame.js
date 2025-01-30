@@ -29,11 +29,7 @@ export class PlayGame extends Scene {
     player.create();
 
     // create xp
-    const xpGroup = (this.xpGroup = {});
-    Object.entries(xpsConfig).forEach(([name, config]) => {
-      // Create a new weapon for each config
-      xpGroup[name] = new XP(scene.scene, config);
-    });
+    this.xpGroup = new XP(scene.scene, xpsConfig);
 
     // create enemies
     const enemies = (this.enemies = {});
@@ -74,7 +70,7 @@ export class PlayGame extends Scene {
 
   // method to be called at each frame
   update() {
-    const { player, enemies, scene } = this;
+    const { player, enemies, scene, xpGroup } = this;
     // set movement direction according to keys pressed
     let movementDirection = new Phaser.Math.Vector2(0, 0);
     movementDirection = checkControllsPressed(
@@ -90,5 +86,7 @@ export class PlayGame extends Scene {
     Object.keys(enemies).forEach((enemyName) => {
       enemies[enemyName].moveTowards(player.group);
     });
+
+    xpGroup.combineXP();
   }
 }

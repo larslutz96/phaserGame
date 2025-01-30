@@ -39,8 +39,14 @@ export class Preloader extends Scene {
       const assetList = self.cache.json.get("assetList");
 
       Object.values(assetList).forEach((image) => {
-        const { path, type, texture, frameWidth = 32, frameHeight = 48 } = image;
-        const name = texture || path.replace(".png","")
+        const {
+          path,
+          type,
+          texture,
+          frameWidth = 32,
+          frameHeight = 48,
+        } = image;
+        const name = texture || path.replace(".png", "");
         try {
           if (type === "spritesheet") {
             self.load.spritesheet(name, `sprites/${path}`, {

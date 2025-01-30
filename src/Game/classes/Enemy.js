@@ -92,15 +92,12 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     const { scene, xpValue } = this;
 
     // Create XP drop
-    scene.xpGroup[xpValue].create(x, y);
+    scene.xpGroup.create(x, y, xpValue);
   }
 
-  kill(child) {
-    const { group } = this;
-    group.killAndHide(child);
-    child.body.checkCollision.none = true;
-
+  destroy(child) {
     // Drop XP
     this.onDeath(child.x, child.y);
+    child.destroy();
   }
 }

@@ -12,10 +12,11 @@ export class XP extends Phaser.Physics.Arcade.Sprite {
     this.group = this.scene.physics.add.group();
   }
 
-  create(x, y) {
+  create(x, y, xpValue) {
     const { scene, texture, group, displayWidth, name } = this;
     const xp = scene.physics.add.sprite(x, y, texture);
     xp.name = name;
+    xp.xpValue = xpValue;
     if (displayWidth) {
       xp.displayWidth = displayWidth;
       xp.scaleY = xp.scaleX;
@@ -32,9 +33,24 @@ export class XP extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
-  kill(child) {
+  destroy(child) {
+    child.destroy(child);
+  }
+
+  // New method to combine all children of the XP group into one
+  combineXP() {
     const { group } = this;
-    group.killAndHide(child);
-    child.body.checkCollision.none = true;
+
+    // Iterate over all children in the group
+    const visibleChildren = group.getMatching("visible", true);
+    if (visibleChildren.length >= 10) {
+      let xpValue = 0;
+      visibleChildren.forEach((child) => {
+        xpValue += child.xpValue;
+        this.destroy(child);
+      });
+      // Create a new sprite to combine all children into
+      this.create(visibleChildren[0].x, visibleChildren[0].y, xpValue);
+    }
   }
 }

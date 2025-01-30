@@ -85,9 +85,7 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
-  kill(child) {
-    const { group } = this;
-    group.killAndHide(child);
-    child.body.checkCollision.none = true;
+  destroy(child) {
+    child.destroy(child);
   }
 }
