@@ -1,3 +1,5 @@
+import { gameOptions } from "./config/gameOptions";
+
 const createTimers = (args) => {
   const { classes, time } = args;
   const timers = Object.keys(classes).flatMap((typeName) =>
@@ -31,4 +33,12 @@ const createTimers = (args) => {
   });
 };
 
-export { createTimers };
+const isInsideWorld = (x, y) => {
+  const worldWidth = gameOptions.worldSize.width; // World width (game canvas size)
+  const worldHeight = gameOptions.worldSize.height; // World height (game canvas size)
+
+  // Check if (x, y) is within the game world bounds
+  return x >= 0 && x <= worldWidth && y >= 0 && y <= worldHeight;
+};
+
+export { createTimers, isInsideWorld };

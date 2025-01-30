@@ -9,11 +9,13 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
       fill: gameOptions.font.fill,
       fontStyle: gameOptions.font.fontStyle,
     });
+    this.xpText.setScrollFactor(0); // Makes the text stay fixed on the screen
     this.healthText = scene.add.text(0, 20, `Health: ${config.health}`, {
       fontSize: gameOptions.font.fontSize,
       fill: gameOptions.font.fill,
       fontStyle: gameOptions.font.fontStyle,
     });
+    this.healthText.setScrollFactor(0); // Makes the text stay fixed on the screen
 
     // Dynamically assign all config from config
     this.config = {};
@@ -32,6 +34,7 @@ export class Player extends Phaser.Physics.Arcade.Sprite {
     // Dynamically assign all config from this
     Object.assign(player, config);
     player.setBounce(0.2);
+    player.setCollideWorldBounds(true);
 
     player.setCollideWorldBounds(true);
   }

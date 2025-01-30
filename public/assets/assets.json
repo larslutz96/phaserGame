@@ -1,16 +1,16 @@
 {
   "axe": {
-    "path": "axe.png",
+    "path": "axe.png"
+  },
+  "bomb": {
+    "path": "bomb.png",
     "displayWidth": 20,
-    "name": "axe",
-    "texture": "axe",
+    "name": "mine",
+    "texture": "bomb",
     "textureType": "image"
   },
   "bullet": {
-    "path": "bullet.png",
-    "name": "bullet",
-    "texture": "bullet",
-    "textureType": "image"
+    "path": "bullet.png"
   },
   "bunny": {
     "path": "bunny.png",
@@ -20,6 +20,13 @@
   },
   "enemy": {
     "path": "enemy.png"
+  },
+  "fart": {
+    "path": "fart.png",
+    "displayWidth": 50,
+    "name": "fart",
+    "texture": "fart",
+    "textureType": "image"
   },
   "joni": {
     "path": "joni.png",
@@ -43,7 +50,7 @@
   },
   "smallXP": {
     "path": "smallXP.png",
-    "displayWidth": 8,
+    "displayWidth": 15,
     "name": "xp",
     "texture": "smallXP",
     "textureType": "image"

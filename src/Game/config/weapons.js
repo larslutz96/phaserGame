@@ -1,48 +1,83 @@
-const weaponActionFunctions = {
-  damageEnemy(enemies, enemy, damage) {
-    enemy.health = enemy.health - damage;
-    if (enemy.health <= 0) enemies.destroy(enemy);
-  },
-  homingWeapon(weapon, scene, speed) {
-    scene.physics.moveToObject(weapon, scene.player.group, speed);
-  },
-};
+// const weaponActionFunctions = {
+//   homingWeapon(weapon, scene, speed) {
+//     scene.physics.moveToObject(weapon, scene.player.group, speed);
+//   },
+// };
 
 export const weaponsConfig = {
-  bullet: {
-    name: "bullet",
-    texture: "bullet",
+  // bullet: {
+  //   name: "bullet",
+  //   texture: "bullet",
+  //   textureType: "image",
+  //   damage: 10,
+  //   speed: 300,
+  //   cooldown: 700,
+  //   colliderActions: [
+  //     {
+  //       targetGroupDefinition: { typeName: "enemies" },
+  //       callback: function (weapon, enemy) {
+  //         const enemies = this.scene.enemies[enemy.name];
+  //         weaponActionFunctions.damageEnemy(enemies, enemy, weapon.damage);
+  //         this.destroy(weapon);
+  //       },
+  //     },
+  //   ],
+  // },
+  // axe: {
+  //   name: "axe",
+  //   texture: "axe",
+  //   textureType: "image",
+  //   damage: 50,
+  //   speed: 150,
+  //   displayWidth: 20,
+  //   cooldown: 1000,
+  //   colliderActions: [
+  //     {
+  //       targetGroupDefinition: { typeName: "enemies" },
+  //       callback: function (weapon, enemy) {
+  //         const { scene, speed } = this;
+  //         const enemies = this.scene.enemies[enemy.name];
+  //         weaponActionFunctions.damageEnemy(enemies, enemy, weapon.damage);
+  //         weaponActionFunctions.homingWeapon(weapon, scene, speed);
+  //       },
+  //     },
+  //   ],
+  // },
+  fart: {
+    name: "fart",
+    texture: "fart",
     textureType: "image",
-    damage: 10,
-    speed: 300,
-    cooldown: 500,
+    damage: 50,
+    speed: 500,
+    displayWidth: 50,
+    cooldown: 1000,
     colliderActions: [
       {
         targetGroupDefinition: { typeName: "enemies" },
         callback: function (weapon, enemy) {
-          const enemies = this.scene.enemies[enemy.name];
-          weaponActionFunctions.damageEnemy(enemies, enemy, weapon.damage);
-          this.destroy(weapon);
+          const enemiesDefinition = this.scene.enemies[enemy.name];
+          enemiesDefinition.damageEnemy(enemy, weapon.damage);
         },
       },
     ],
   },
-  axe: {
-    name: "axe",
-    texture: "axe",
+  mine: {
+    name: "mine",
+    texture: "bomb",
     textureType: "image",
-    damage: 50,
-    speed: 150,
+    damage: 150,
+    speed: 0, // Static mine, no speed
     displayWidth: 20,
-    cooldown: 500,
+    cooldown: 2000,
+    radius: 200,
     colliderActions: [
       {
         targetGroupDefinition: { typeName: "enemies" },
         callback: function (weapon, enemy) {
-          const { scene, speed } = this;
           const enemies = this.scene.enemies[enemy.name];
-          weaponActionFunctions.damageEnemy(enemies, enemy, weapon.damage);
-          weaponActionFunctions.homingWeapon(weapon, scene, speed);
+          // Damage all enemies within a radius
+          enemies.damageEnemy(enemy, weapon.damage, { radius: weapon.radius });
+          this.destroy(weapon);
         },
       },
     ],

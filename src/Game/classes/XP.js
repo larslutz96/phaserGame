@@ -54,6 +54,13 @@ export class XP extends Phaser.Physics.Arcade.Sprite {
         this.destroy(child);
       });
       visibleChildren[0].xpValue = xpValue;
+      this.scene.tweens.add({
+        targets: visibleChildren[0],
+        y: visibleChildren[0].y - 100,
+        duration: 300,
+        yoyo: true,
+        ease: "Power1",
+      });
     }
   }
 }

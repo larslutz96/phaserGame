@@ -4,7 +4,8 @@
   "main": "src/main.js",
   "private": true,
   "scripts": {
-    "dev": "node scripts/generateAssets.js & node log.js dev & webpack-dev-server --config webpack/config.js --open",
+    "dev": "node log.js dev & webpack-dev-server --config webpack/config.js --open",
+    "createAssets": "node scripts/generateAssets.js",
     "prettier": "npx prettier . --write",
     "build": "node log.js build & webpack --config webpack/config.prod.js",
     "dev-nolog": "webpack-dev-server --config webpack/config.js --open",

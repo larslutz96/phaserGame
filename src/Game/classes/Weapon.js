@@ -15,7 +15,7 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
 
   fire() {
     const { scene, group, config } = this;
-    const enemieNames = Object.keys(scene.enemies);
+    const enemieTypeNames = Object.keys(scene.enemies);
     // Function to calculate distance
     const distanceToPlayer = (x1, y1, x2, y2) => {
       var dx = x1 - x2;
@@ -26,7 +26,7 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
     let closestEnemy;
     let closestEnemyChild;
     let closestDistance = 9999;
-    enemieNames.forEach((name) => {
+    enemieTypeNames.forEach((name) => {
       const currentEnemyDefintion = scene.enemies[name];
       const currentClosestEnemyChild = currentEnemyDefintion.getClosestTo(
         scene.player.group,

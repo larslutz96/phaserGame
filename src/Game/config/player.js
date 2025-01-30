@@ -9,9 +9,9 @@ export const playerConfig = {
     {
       targetGroupDefinition: { typeName: "enemies" },
       callback: function (player, enemy) {
-        this.health = this.health - enemy.damage;
-        if (this.health <= 0) this.scene.scene.restart();
-        this.healthText.setText(`Health: ${this.health}`);
+        player.health = player.health - enemy.damage;
+        if (player.health <= 0) this.scene.scene.restart();
+        this.healthText.setText(`Health: ${player.health}`);
       },
     },
     {

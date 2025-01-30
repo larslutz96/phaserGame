@@ -10,6 +10,7 @@ import { xpsConfig } from "../Game/config/xps";
 import { Enemy } from "../Game/classes/Enemy";
 import { Player } from "../Game/classes/Player";
 import { XP } from "../Game/classes/XP";
+import { gameOptions } from "../Game/config/gameOptions";
 
 // PlayGame class extends Phaser.Scene class
 export class PlayGame extends Scene {
@@ -22,11 +23,26 @@ export class PlayGame extends Scene {
   }
 
   create() {
-    const { time, scene } = this;
+    const { time, scene, physics } = this;
+    physics.world.setBounds(
+      0,
+      0,
+      gameOptions.worldSize.width,
+      gameOptions.worldSize.height,
+    );
 
     // create player
     const player = (this.player = new Player(scene.scene, playerConfig));
     player.create();
+
+    // Setup camera to follow the player
+    this.cameras.main.setBounds(
+      0,
+      0,
+      gameOptions.worldSize.width,
+      gameOptions.worldSize.height,
+    );
+    this.cameras.main.startFollow(player.group, true, 0.1, 0.1);
 
     // create xp
     this.xpGroup = new XP(scene.scene, xpsConfig);
