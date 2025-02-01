@@ -18,6 +18,13 @@
     "texture": "bunny",
     "textureType": "image"
   },
+  "cake": {
+    "path": "cake.jpg",
+    "displayWidth": 50,
+    "name": "cake",
+    "texture": "cake",
+    "textureType": "image"
+  },
   "enemy": {
     "path": "enemy.png"
   },

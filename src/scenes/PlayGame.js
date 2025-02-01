@@ -99,8 +99,8 @@ export class PlayGame extends Scene {
 
     player.setPlayerVelocity(movementDirection);
 
-    // move all enemies towards player
     Object.keys(enemies).forEach((enemyName) => {
+      // move all enemies towards player
       enemies[enemyName].moveTowards(player.group);
     });
 

@@ -10,7 +10,8 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
     });
 
     const { physics } = scene;
-    this.group = physics.add.group();
+    const immovable = config.immovable || true;
+    this.group = physics.add.group({ immovable });
   }
 
   fire() {
@@ -90,7 +91,10 @@ export class Weapon extends Phaser.Physics.Arcade.Sprite {
     });
   }
 
-  destroy(child) {
-    child.destroy(child);
+  destroy(child, delay = 0) {
+    child.setVelocity(0, 0); // Stop movement
+    this.scene.time.delayedCall(delay, () => {
+      child.destroy();
+    });
   }
 }

@@ -6,6 +6,7 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     super(scene, 5, 5, config.texture);
     this.scene = scene;
     this.config = {};
+    this.events = new Phaser.Events.EventEmitter();
 
     // Dynamically assign all config from config
     this.config = {};
@@ -14,7 +15,8 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     });
 
     // Add enemy group to scene's physics system
-    this.group = this.scene.physics.add.group();
+    const immovable = config.immovable || true;
+    this.group = this.scene.physics.add.group({ immovable });
   }
 
   create() {
@@ -64,32 +66,72 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     group.add(enemy);
   }
 
-  damageEnemy(targetEnemy, damage, details) {
-    if (details?.radius) {
-      const radius = details.radius;
-      // Get the position of the target enemy (center of the explosion or damage area)
-      const { x, y } = targetEnemy;
-      const visibleEnemies = this.group.getMatching("visible", true);
-      // Loop through all enemies in the group
-      visibleEnemies.forEach((enemy) => {
-        // Calculate the distance between the target enemy and the other enemies
-        const distance = Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y);
+  getEnemiesInRadius(targetEnemy, radius) {
+    // Get the position of the target enemy (center of the explosion or damage area)
+    const { x, y } = targetEnemy;
+    const visibleEnemies = this.group.getMatching("visible", true);
+    // Loop through all enemies in the group
+    const filteredEnemies = visibleEnemies.filter((enemy) => {
+      const distance = Phaser.Math.Distance.Between(x, y, enemy.x, enemy.y);
+      return distance <= radius;
+    });
+    return filteredEnemies;
+  }
 
-        // If the enemy is within the radius, apply damage
-        if (distance <= radius) {
-          // Apply damage to the enemy
-          enemy.health = enemy.health - damage;
-          if (enemy.health <= 0) this.destroy(enemy);
+  damageEnemy(targetEnemy, damage) {
+    let enemies = [targetEnemy];
+    if (damage?.radius) {
+      enemies = this.getEnemiesInRadius(targetEnemy, damage.radius);
+    }
+    enemies.forEach((enemy) => {
+      this.reduceHealth(enemy, damage);
+      if (enemy.health <= 0) this.destroy(enemy);
+    });
+  }
 
-          // Optionally, you can add an effect or animation for the damage
-          // For example:
-          // const damageEffect = scene.add.sprite(enemy.x, enemy.y, "damageEffect");
-          // damageEffect.play("damageAnimation"); // Assuming you have a damage animation
+  stun(enemy, duration) {
+    enemy.setVelocity(0, 0); // Stop movement
+    enemy.stunned = true;
+    this.scene.time.delayedCall(duration, () => {
+      enemy.stunned = false;
+    });
+  }
+
+  reduceHealth(enemy, damage) {
+    switch (damage.type) {
+      case "poison": {
+        if (enemy.isPoisoned) return; // Prevents multiple poison effects
+        enemy.health -= damage.value;
+        if (enemy.health <= 0) {
+          this.destroy(enemy);
+          return;
         }
-      });
-    } else {
-      targetEnemy.health = targetEnemy.health - damage;
-      if (targetEnemy.health <= 0) this.destroy(targetEnemy);
+        enemy.isPoisoned = true;
+        enemy.setTint(0x00ff00);
+        let tickInterval = 500; // Apply damage every second
+        const poison = this.scene.time.addEvent({
+          delay: tickInterval, // Run every second
+          repeat: Math.floor(damage.duration / tickInterval) - 1, // Repeat for the duration
+          callback: () => {
+            enemy.health -= damage.value;
+            if (enemy.health <= 0) {
+              poison.remove();
+              this.destroy(enemy);
+            }
+          },
+        });
+        break;
+      }
+      case "stun":
+        {
+          this.stun(enemy, damage.duration);
+        }
+        break;
+      default:
+        enemy.health -= damage.value;
+        if (enemy.health <= 0) {
+          this.destroy(enemy);
+        }
     }
   }
 
@@ -132,9 +174,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
   }
 
   moveTowards(destination) {
-    const { group, scene, speed } = this;
+    const { group, scene, config } = this;
     group.getMatching("visible", true).forEach((child) => {
-      scene.physics.moveToObject(child, destination, speed);
+      if (!child.stunned) {
+        scene.physics.moveToObject(child, destination, config.speed);
+      }
     });
   }
 
@@ -153,9 +197,11 @@ export class Enemy extends Phaser.Physics.Arcade.Sprite {
     scene.xpGroup.create(x, y, config.xpValue);
   }
 
-  destroy(child) {
-    // Drop XP
-    this.onDeath(child.x, child.y);
-    child.destroy();
+  destroy(child, delay = 0) {
+    if (child.body) child.body.checkCollision.none = true;
+    this.scene.time.delayedCall(delay, () => {
+      this.onDeath(child.x, child.y);
+      child.destroy();
+    });
   }
 }
